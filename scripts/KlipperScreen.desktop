@@ -2,7 +2,7 @@
 Name=KlipperScreen
 GenericName=Touch screen GUI for Klipper via Moonraker
 Icon=KlipperScreen
-Exec=sh -c "$HOME/.klipper_screen_env/bin/python $HOME/klipper-screen-cnc/screen.py"
+Exec=sh -c "$HOME/.klipper-screen-env/bin/python $HOME/klipper-screen-cnc/screen.py"
 Terminal=false
 Type=Application
 Categories=Graphics;3DGraphics;Engineering;

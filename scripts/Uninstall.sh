@@ -18,7 +18,7 @@ sudo systemctl daemon-reload
 sudo systemctl reset-failed
 
 echo "* Removing environment"
-sudo rm -rf ~/.klipper_screen_env
+sudo rm -rf ~/.klipper-screen-env
 
 echo ""
 echo "* Uninstallation nearly complete. Please run:"

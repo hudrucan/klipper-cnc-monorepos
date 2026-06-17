@@ -2,7 +2,7 @@
 
 SCRIPTPATH=$(dirname -- "$(readlink -f -- "$0")")
 KSPATH=$(dirname "$SCRIPTPATH")
-KSENV="${KLIPPERSCREEN_VENV:-${HOME}/.klipper_screen_env}"
+KSENV="${KLIPPERSCREEN_VENV:-${HOME}/.klipper-screen-env}"
 
 XSERVER="xinit xinput x11-xserver-utils xserver-xorg-input-evdev xserver-xorg-input-libinput xserver-xorg-legacy xserver-xorg-video-fbdev"
 CAGE="cage seatd xwayland"
