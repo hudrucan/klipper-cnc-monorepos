@@ -62,11 +62,11 @@ class KlipperScreen(Gtk.Window):
 
     def __init__(self, args):
         try:
-            super().__init__(title="KlipperScreen")
+            super().__init__(title="Klipper Screen CNC")
         except Exception as e:
             logging.exception(f"{e}\n\n{traceback.format_exc()}")
             raise RuntimeError from e
-        GLib.set_prgname("KlipperScreen")
+        GLib.set_prgname("klipper-screen-cnc")
         self.state: AppState = AppState()
         self.panels = {}
         self.panels_reinit = []

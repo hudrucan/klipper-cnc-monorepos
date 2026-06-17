@@ -344,7 +344,7 @@ class KlipperScreenConfig:
                 "print_estimate_method": {
                     "section": "main",
                     "name": _("Estimated Time Method"),
-                    "type": "dropdown",
+                    "type": None,
                     "tooltip": _("Changes how the time remaining is calculated"),
                     "value": "auto",
                     "options": [
@@ -370,7 +370,7 @@ class KlipperScreenConfig:
                 "screen_blanking_printing": {
                     "section": "main",
                     "name": _("Screen Power Off Time") + " (" + _("Printing") + ")",
-                    "type": "dropdown",
+                    "type": None,
                     "tooltip": _("Timeout for screen black-out or power-off during printing"),
                     "value": "3600",
                     "callback": screen.set_screenblanking_printing_timeout,
@@ -463,7 +463,7 @@ class KlipperScreenConfig:
                 "show_heater_power": {
                     "section": "main",
                     "name": _("Show Heater Power"),
-                    "type": "binary",
+                    "type": None,
                     "tooltip": _("Current percentage and graph line"),
                     "value": "False",
                     "callback": screen.reload_panels,
@@ -473,7 +473,7 @@ class KlipperScreenConfig:
                 "show_scroll_steppers": {
                     "section": "main",
                     "name": _("Show Scrollbars Buttons"),
-                    "type": "binary",
+                    "type": None,
                     "tooltip": _("Useful for un-responsive touchscreens"),
                     "value": "False",
                     "callback": screen.reload_panels,
@@ -483,7 +483,7 @@ class KlipperScreenConfig:
                 "auto_open_extrude": {
                     "section": "main",
                     "name": _("Auto-open Extrude On Pause"),
-                    "type": "binary",
+                    "type": None,
                     "value": "True",
                     "callback": screen.reload_panels,
                 }
