@@ -321,6 +321,8 @@ class KlipperScreen(Gtk.Window):
                 ],
                 "idle_timeout": ["state"],
                 "print_stats": [
+                    "print_duration",
+                    "total_duration",
                     "filename",
                     "state",
                     "message",

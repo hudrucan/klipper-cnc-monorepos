@@ -683,8 +683,10 @@ class Panel(ScreenPanel):
                 self.labels["duration"].set_label(
                     self.format_time(data["print_stats"]["total_duration"])
                 )
-            if self.state in ["printing", "paused"]:
-                self.update_time_left()
+        if self.state in ["printing", "paused"] and (
+            "print_stats" in data or "virtual_sdcard" in data
+        ):
+            self.update_time_left()
 
     def update_flow(self):
         if not self.flowstore:
@@ -696,18 +698,15 @@ class Panel(ScreenPanel):
         return True
 
     def update_time_left(self):
-        progress = (
-            (
-                max(
-                    self._printer.get_stat("virtual_sdcard", "file_position")
-                    - self.file_metadata["gcode_start_byte"],
-                    0,
-                )
-                / (self.file_metadata["gcode_end_byte"] - self.file_metadata["gcode_start_byte"])
+        progress = float(self._printer.get_stat("virtual_sdcard", "progress") or 0)
+        gcode_start = self.file_metadata.get("gcode_start_byte")
+        gcode_end = self.file_metadata.get("gcode_end_byte")
+        if gcode_start is not None and gcode_end is not None and gcode_end > gcode_start:
+            file_position = float(
+                self._printer.get_stat("virtual_sdcard", "file_position") or 0
             )
-            if "gcode_start_byte" in self.file_metadata
-            else self._printer.get_stat("virtual_sdcard", "progress")
-        )
+            progress = (max(file_position - gcode_start, 0)) / (gcode_end - gcode_start)
+        progress = min(max(progress, 0), 1)
 
         elapsed_label = f"{self.labels['elapsed'].get_text()}  {self.labels['duration'].get_text()}"
         self.buttons["elapsed"].set_label(elapsed_label)
@@ -717,16 +716,18 @@ class Panel(ScreenPanel):
         slicer_time = (
             self.file_metadata["estimated_time"] if "estimated_time" in self.file_metadata else 0
         )
-        print_duration = float(self._printer.get_stat("print_stats", "print_duration"))
+        print_duration = float(self._printer.get_stat("print_stats", "print_duration") or 0)
         if print_duration < 1:  # No-extrusion
             if last_time:
                 print_duration = last_time * progress
             elif slicer_time:
                 print_duration = slicer_time * progress
             else:
-                print_duration = float(self._printer.get_stat("print_stats", "total_duration"))
+                print_duration = float(
+                    self._printer.get_stat("print_stats", "total_duration") or 0
+                )
 
-        fila_used = float(self._printer.get_stat("print_stats", "filament_used"))
+        fila_used = float(self._printer.get_stat("print_stats", "filament_used") or 0)
         if (
             "filament_total" in self.file_metadata
             and self.file_metadata["filament_total"] >= fila_used > 0
