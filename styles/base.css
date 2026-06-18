@@ -529,20 +529,57 @@ trough {
     opacity: 0.75;
 }
 
+.cnc-dro-card {
+    padding: 0.65em;
+    border: 1px solid alpha(@text, 0.18);
+    background-color: alpha(@text, 0.025);
+}
+
+.cnc-dro-card-x {
+    border-top: 0.2em solid @color1;
+}
+
+.cnc-dro-card-y {
+    border-top: 0.2em solid @color2;
+}
+
+.cnc-dro-card-z {
+    border-top: 0.2em solid @color3;
+}
+
 .cnc-dro-axis {
     font-size: 1.15em;
     font-weight: bold;
 }
 
+.cnc-dro-homed {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: @warning;
+}
+
+.cnc-dro-homed-active {
+    color: @color4;
+}
+
+.cnc-dro-field {
+    font-size: 0.7em;
+    font-weight: bold;
+    opacity: 0.6;
+}
+
 .cnc-dro-value {
     font-family: monospace;
-    font-size: 1.15em;
+    font-size: 1.35em;
+    font-weight: bold;
 }
 
 .cnc-dro-limits {
     font-family: monospace;
-    font-size: 0.85em;
+    font-size: 0.75em;
     opacity: 0.65;
+    padding-top: 0.35em;
+    border-top: 1px solid alpha(@text, 0.12);
 }
 
 .printing-status-label {

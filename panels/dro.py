@@ -23,34 +23,50 @@ class Panel(ScreenPanel):
         for index, name in enumerate(("wcs", "mode", "velocity", "homed")):
             status.attach(self.labels[name], index % 2, index // 2, 1, 1)
 
-        grid = Gtk.Grid(column_homogeneous=True, hexpand=True, vexpand=True)
-        grid.set_column_spacing(8)
-        grid.set_row_spacing(4)
-        for column, heading in enumerate(("", "Machine", "Work", "Offset")):
-            label = Gtk.Label(label=heading)
-            label.get_style_context().add_class("cnc-dro-heading")
-            grid.attach(label, column, 0, 1, 1)
-
+        axes = Gtk.Grid(column_homogeneous=True, hexpand=True, vexpand=True)
+        axes.set_column_spacing(10)
+        axes.set_row_spacing(10)
         for index, axis in enumerate(self.axes):
-            row = index * 2 + 1
-            self.labels[f"axis_{axis}"] = Gtk.Label(label=axis)
-            self.labels[f"axis_{axis}"].get_style_context().add_class("cnc-dro-axis")
-            grid.attach(self.labels[f"axis_{axis}"], 0, row, 1, 1)
-
-            for column, field in enumerate(("machine", "work", "offset"), start=1):
-                self.labels[f"{field}_{axis}"] = Gtk.Label(label="--")
-                self.labels[f"{field}_{axis}"].get_style_context().add_class("cnc-dro-value")
-                grid.attach(self.labels[f"{field}_{axis}"], column, row, 1, 1)
-
-            self.labels[f"limits_{axis}"] = Gtk.Label(label="Travel --")
-            self.labels[f"limits_{axis}"].set_halign(Gtk.Align.START)
-            self.labels[f"limits_{axis}"].get_style_context().add_class("cnc-dro-limits")
-            grid.attach(self.labels[f"limits_{axis}"], 1, row + 1, 3, 1)
+            card = self._axis_card(axis)
+            if self._screen.vertical_mode:
+                axes.attach(card, 0, index, 1, 1)
+            else:
+                axes.attach(card, index, 0, 1, 1)
 
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         content.pack_start(status, False, False, 0)
-        content.pack_start(grid, True, True, 0)
+        content.pack_start(axes, True, True, 0)
         self.content.add(content)
+
+    def _axis_card(self, axis):
+        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        card.set_hexpand(True)
+        card.set_vexpand(True)
+        card.get_style_context().add_class("cnc-dro-card")
+        card.get_style_context().add_class(f"cnc-dro-card-{axis.lower()}")
+
+        header = Gtk.Box(spacing=6)
+        self.labels[f"axis_{axis}"] = Gtk.Label(label=axis, xalign=0)
+        self.labels[f"axis_{axis}"].get_style_context().add_class("cnc-dro-axis")
+        self.labels[f"homed_{axis}"] = Gtk.Label(label="OPEN", xalign=1)
+        self.labels[f"homed_{axis}"].get_style_context().add_class("cnc-dro-homed")
+        header.pack_start(self.labels[f"axis_{axis}"], True, True, 0)
+        header.pack_end(self.labels[f"homed_{axis}"], False, False, 0)
+        card.pack_start(header, False, False, 0)
+
+        for field, heading in (("machine", "MACHINE"), ("work", "WORK"), ("offset", "OFFSET")):
+            label = Gtk.Label(label=heading, xalign=0)
+            label.get_style_context().add_class("cnc-dro-field")
+            card.pack_start(label, False, False, 0)
+
+            self.labels[f"{field}_{axis}"] = Gtk.Label(label="--", xalign=0)
+            self.labels[f"{field}_{axis}"].get_style_context().add_class("cnc-dro-value")
+            card.pack_start(self.labels[f"{field}_{axis}"], False, False, 0)
+
+        self.labels[f"limits_{axis}"] = Gtk.Label(label="Min --    Max --", xalign=0)
+        self.labels[f"limits_{axis}"].get_style_context().add_class("cnc-dro-limits")
+        card.pack_end(self.labels[f"limits_{axis}"], False, False, 0)
+        return card
 
     @staticmethod
     def _status_label(text):
@@ -93,11 +109,16 @@ class Panel(ScreenPanel):
             digits = 3 if axis == "Z" else 2
             homed = axis.lower() in homed_axes
 
-            self.labels[f"axis_{axis}"].set_label(f"{axis} {'OK' if homed else '--'}")
+            self.labels[f"homed_{axis}"].set_label("HOMED" if homed else "OPEN")
+            homed_context = self.labels[f"homed_{axis}"].get_style_context()
+            if homed:
+                homed_context.add_class("cnc-dro-homed-active")
+            else:
+                homed_context.remove_class("cnc-dro-homed-active")
             self.labels[f"machine_{axis}"].set_label(f"{machine_position:.{digits}f}")
             self.labels[f"work_{axis}"].set_label(f"{work_position:.{digits}f}")
             self.labels[f"offset_{axis}"].set_label(f"{offset:+.{digits}f}")
             self.labels[f"limits_{axis}"].set_label(
-                f"Travel {self._position(minimum, index):.{digits}f} .. "
-                f"{self._position(maximum, index):.{digits}f}"
+                f"Min {self._position(minimum, index):.{digits}f}    "
+                f"Max {self._position(maximum, index):.{digits}f}"
             )
