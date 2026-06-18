@@ -10,3 +10,4 @@ build/
 venv/
 .venv/
 docs/extra
+.claude/auto-context.md

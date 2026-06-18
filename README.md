@@ -1,52 +1,50 @@
-# KlipperScreen
+# Klipper Screen CNC
 
-KlipperScreen is a touchscreen GUI that interfaces with [Klipper](https://github.com/Klipper3d/klipper) via [Moonraker](https://github.com/arksine/moonraker). It allows you to switch between multiple printers and access them from a single location. Notably, it doesn't need to run on the same host as your printer; you can install it on another device and configure the IP address to connect to the printer.
+A CNC-focused fork of [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen), built for touchscreen control of Klipper-based CNC machines.
 
-### Documentation
+This fork removes most 3D-printer-specific UI and replaces it with a compact CNC workflow:
 
-For detailed information, [click here to access the documentation](https://klipperscreen.github.io/KlipperScreen/).
+- DRO with machine and work coordinates
+- Safer incremental jogging
+- Interactive WCS selection and XY map
+- MDI and G-code macro access
+- Spindle clockwise, counter-clockwise, and stop controls
+- CNC-oriented run status, progress, pause, resume, restart, and cancel
+- Limits, network, system, and shutdown controls
 
-### Inspiration
+## Status
 
-KlipperScreen draws inspiration from [OctoScreen](https://github.com/Z-Bolt/OctoScreen/) and was developed to provide a native touchscreen GUI compatible with [Klipper](https://github.com/Klipper3d/klipper) and [Moonraker](https://github.com/arksine/moonraker).
+This project is under active development and currently targets our own Klipper CNC setup. Treat it as experimental machine-control software: verify motion directions, limits, spindle wiring, and emergency-stop behavior before running a toolpath.
 
-[![Main Menu](docs/img/panels/main_panel.png)](https://klipperscreen.readthedocs.io/en/latest/Panels/)
+## Requirements
 
-Explore more screenshots [here](https://klipperscreen.readthedocs.io/en/latest/Panels/).
+- Klipper
+- Moonraker
+- A Linux host with a GTK 3-compatible display
+- Python 3.9 or newer
+- A configured touchscreen or mouse
 
-### Translations
+Spindle controls are shown when Klipper exposes the `M3` and `M5` commands and an `[output_pin spindle]` section. `M4` enables the counter-clockwise control.
 
-Translations for KlipperScreen are hosted on Weblate. Thanks to the Weblate team for supporting the open-source community.
+## Install
 
-<a href="https://hosted.weblate.org/engage/klipperscreen/">
-    <img src="https://hosted.weblate.org/widget/klipperscreen/svg-badge.svg" alt="Translation status" />
-</a>
+```bash
+git clone https://github.com/hudrucan/klipper-screen-cnc.git
+cd klipper-screen-cnc
+./scripts/KlipperScreen-install.sh
+sudo systemctl restart klipper-screen
+```
 
-Click the widget below to access the translation platform:
+The installer creates `klipper-screen.service` and uses `~/.klipper-screen-env` for the Python virtual environment by default.
 
-<a href="https://hosted.weblate.org/engage/klipperscreen/">
-    <img src="https://hosted.weblate.org/widget/klipperscreen/horizontal-auto.svg" alt="Weblate widget" width="50%" />
-</a>
+## Sonic Pad Debian
 
-### About the Project
+On [SonicPad-Debian](https://github.com/Jpe230/SonicPad-Debian), the bundled `display-sleep.service` may switch off the physical backlight when X11 is temporarily unavailable. If the screen unexpectedly stays black after Klipper Screen starts or restarts, inspect that service separately from this application.
 
-KlipperScreen was created by Jordan Ruthe in 2020.
+## Upstream
 
-| Donate to Jordan |
-|------------------|
-| [Patreon](https://www.patreon.com/klipperscreen) |
-| [Ko-fi](https://ko-fi.com/klipperscreen) |
+Klipper Screen CNC is derived from KlipperScreen by Jordan Ruthe and its contributors. Refer to the [upstream project](https://github.com/KlipperScreen/KlipperScreen) for the original project and general architecture.
 
-Since 2021, the project has been maintained by Alfredo Monclus (alfrix).
+## License
 
-| Donate to Alfrix |
-|------------------|
-| [Ko-fi](https://ko-fi.com/alfrix) |
-
-We extend our gratitude to all contributors who have helped along the way. [Meet the contributors](https://github.com/KlipperScreen/KlipperScreen/graphs/contributors).
-
-### Sponsors
-
-![LDO](docs/img/sponsors/LDO.png) ![YUMI](docs/img/sponsors/YUMI.png)
-
-Special thanks to [LDO](https://ldomotors.com/) and [YUMI](https://wiki.yumi-lab.com/) for sponsoring KlipperScreen and the open-source community.
+This fork remains licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE).
