@@ -1,5 +1,6 @@
 import logging
 import re
+from time import monotonic
 
 import gi
 
@@ -11,12 +12,15 @@ from ks_includes.screen_panel import ScreenPanel
 
 
 class Panel(ScreenPanel):
-    distances = [".1", ".5", "1", "5", "10", "25", "50"]
-    distance = distances[-2]
+    distances = [".01", ".1", "1", "5", "10", "25", "50"]
+    distance = "5"
 
     def __init__(self, screen, title):
-        title = title or _("Move")
+        title = title or _("Jog")
         super().__init__(screen, title)
+        self.distances = list(type(self).distances)
+        self.distance = type(self).distance
+        self.last_jog = {}
 
         if self.ks_printer_cfg is not None:
             dis = self.ks_printer_cfg.get("move_distances", "")
@@ -24,7 +28,7 @@ class Panel(ScreenPanel):
                 dis = [str(i.strip()) for i in dis.split(",")]
                 if 1 < len(dis) <= 7:
                     self.distances = dis
-                    self.distance = self.distances[-2]
+                    self.distance = self.distances[min(3, len(self.distances) - 1)]
 
         self.settings = {}
         self.menu.append("move_menu")
@@ -118,9 +122,11 @@ class Panel(ScreenPanel):
             self.labels[p] = self._gtk.Button()
             self.labels[p].set_hexpand(False)
             self.labels[p].set_vexpand(True)
-            self.labels[p].connect("clicked", self.menu_item_clicked, {"panel": "move_advanced"})
+            self.labels[p].connect("clicked", self.menu_item_clicked, {"panel": "dro"})
             self.labels[p].get_style_context().add_class("no-margin")
         self.labels["move_dist"] = Gtk.Label(label=_("Move Distance (mm)"))
+        self.labels["jog_status"] = Gtk.Label(label="WCS --")
+        self.labels["jog_status"].get_style_context().add_class("cnc-status")
 
         bottomgrid = Gtk.Grid(column_homogeneous=True)
         bottomgrid.set_row_spacing(0)
@@ -130,8 +136,9 @@ class Panel(ScreenPanel):
         bottomgrid.attach(self.labels["pos_y"], 1, 0, 1, 1)
         bottomgrid.attach(self.labels["pos_z"], 2, 0, 1, 1)
         bottomgrid.attach(self.labels["move_dist"], 0, 1, 3, 1)
+        bottomgrid.attach(self.labels["jog_status"], 0, 2, 3, 1)
         if not self._screen.vertical_mode:
-            bottomgrid.attach(adjust, 3, 0, 1, 2)
+            bottomgrid.attach(adjust, 3, 0, 1, 3)
 
         self.labels["move_menu"] = Gtk.Grid(row_homogeneous=True, column_homogeneous=True)
         self.labels["move_menu"].attach(grid, 0, 0, 1, 3)
@@ -155,7 +162,7 @@ class Panel(ScreenPanel):
                     "section": "main",
                     "name": _("Invert X"),
                     "type": "binary",
-                    "tooltip": _("This will affect screw positions and mesh graph"),
+                    "tooltip": _("Invert the X jog direction"),
                     "value": "False",
                     "callback": self.reinit_panels,
                 }
@@ -165,7 +172,7 @@ class Panel(ScreenPanel):
                     "section": "main",
                     "name": _("Invert Y"),
                     "type": "binary",
-                    "tooltip": _("This will affect screw positions and mesh graph"),
+                    "tooltip": _("Invert the Y jog direction"),
                     "value": "False",
                     "callback": self.reinit_panels,
                 }
@@ -187,7 +194,7 @@ class Panel(ScreenPanel):
                     "section": "main",
                     "name": _("XY Speed (mm/s)"),
                     "type": "scale",
-                    "tooltip": _("Only for the move panel"),
+                    "tooltip": _("Jog feed for the X and Y axes"),
                     "value": "50",
                     "range": [1, max_velocity],
                     "step": 1,
@@ -198,7 +205,7 @@ class Panel(ScreenPanel):
                     "section": "main",
                     "name": _("Z Speed (mm/s)"),
                     "type": "scale",
-                    "tooltip": _("Only for the move panel"),
+                    "tooltip": _("Jog feed for the Z axis"),
                     "value": "10",
                     "range": [1, self.max_z_velocity],
                     "step": 1,
@@ -228,15 +235,44 @@ class Panel(ScreenPanel):
             max_vel = max(int(float(data["toolhead"]["max_velocity"])), 2)
             adj = self.options["move_speed_xy"].get_adjustment()
             adj.set_upper(max_vel)
-        if "gcode_move" in data or "toolhead" in data and "homed_axes" in data["toolhead"]:
-            homed_axes = self._printer.get_stat("toolhead", "homed_axes")
+        if (
+            "gcode_move" in data
+            or "toolhead" in data
+            or "motion_report" in data
+            or "work_coordinate_systems" in data
+            or "print_stats" in data
+        ):
+            homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+            position = self._printer.get_stat("gcode_move", "gcode_position")
             for i, axis in enumerate(("x", "y", "z")):
                 if axis not in homed_axes:
                     self.labels[f"pos_{axis}"].set_label(f"{axis.upper()}: ?")
-                elif "gcode_move" in data and "gcode_position" in data["gcode_move"]:
+                elif isinstance(position, (list, tuple)) and len(position) > i:
                     self.labels[f"pos_{axis}"].set_label(
-                        f"{axis.upper()}: {data['gcode_move']['gcode_position'][i]:.2f}"
+                        f"{axis.upper()}: {position[i]:.3f}" if axis == "z"
+                        else f"{axis.upper()}: {position[i]:.2f}"
                     )
+                self.buttons[f"{axis}+"].set_sensitive(self._jog_allowed(axis))
+                self.buttons[f"{axis}-"].set_sensitive(self._jog_allowed(axis))
+
+            wcs = self._printer.get_stat("work_coordinate_systems")
+            active_wcs = (
+                "G53"
+                if wcs and wcs.get("machine_mode")
+                else wcs.get("active_wcs", "G54") if wcs else "Work"
+            )
+            mode = (
+                "G90"
+                if self._printer.get_stat("gcode_move", "absolute_coordinates")
+                else "G91"
+            )
+            velocity = float(self._printer.get_stat("motion_report", "live_velocity") or 0)
+            self.labels["jog_status"].set_label(
+                f"{active_wcs}  |  {mode}  |  {velocity:.2f} mm/s"
+            )
+            running = self._printer.state in {"printing", "paused"}
+            self.buttons["home"].set_sensitive(not running)
+            self.buttons["motors_off"].set_sensitive(not running)
 
     def change_distance(self, widget, distance):
         logging.info(f"### Distance {distance}")
@@ -248,6 +284,15 @@ class Panel(ScreenPanel):
 
     def move(self, widget, axis, direction):
         axis = axis.lower()
+        if not self._jog_allowed(axis):
+            self._screen.show_popup_message(
+                _("Jog is unavailable while running or before the axis is homed")
+            )
+            return
+        now = monotonic()
+        if now - self.last_jog.get(axis, 0) < 0.05:
+            return
+        self.last_jog[axis] = now
         if self._config.get_config()["main"].getboolean(f"invert_{axis}", False) and axis != "z":
             direction = "-" if direction == "+" else "+"
 
@@ -259,10 +304,17 @@ class Panel(ScreenPanel):
         if speed is None:
             speed = self._config.get_config()["main"].getint(config_key, self.max_z_velocity)
         speed = 60 * max(1, speed)
-        script = f"{KlippyGcodes.MOVE_RELATIVE}\nG0 {axis}{dist} F{speed}"
+        script = (
+            "SAVE_GCODE_STATE NAME=_ks_cnc_jog\n"
+            f"{KlippyGcodes.MOVE_RELATIVE}\n"
+            f"G1 {axis.upper()}{dist} F{speed}\n"
+            "RESTORE_GCODE_STATE NAME=_ks_cnc_jog"
+        )
         self._screen._send_action(widget, "printer.gcode.script", {"script": script})
-        if self._printer.get_stat("gcode_move", "absolute_coordinates"):
-            self._screen._ws.api.gcode_script("G90")
+
+    def _jog_allowed(self, axis):
+        homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+        return axis.lower() in homed_axes and self._printer.state not in {"printing", "paused"}
 
     def home(self, widget):
         if "delta" in self._printer.get_config_section("printer")["kinematics"]:

@@ -519,6 +519,26 @@ trough {
     font-weight: bold;
 }
 
+.cnc-status {
+    padding: 0.35em 0.5em;
+    border: 1px solid alpha(@text, 0.22);
+}
+
+.cnc-dro-heading {
+    font-weight: bold;
+    opacity: 0.75;
+}
+
+.cnc-dro-axis {
+    font-size: 1.15em;
+    font-weight: bold;
+}
+
+.cnc-dro-value {
+    font-family: monospace;
+    font-size: 1.15em;
+}
+
 .printing-status-label {
     padding-top: .25em;
     padding-bottom: .15em;

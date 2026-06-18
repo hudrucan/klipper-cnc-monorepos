@@ -314,6 +314,7 @@ class KlipperScreen(Gtk.Window):
                 "display_status": ["progress", "message"],
                 "fan": ["speed"],
                 "gcode_move": [
+                    "absolute_coordinates",
                     "gcode_position",
                     "homing_origin",
                     "speed_factor",
@@ -329,6 +330,8 @@ class KlipperScreen(Gtk.Window):
                     "info",
                 ],
                 "toolhead": [
+                    "axis_maximum",
+                    "axis_minimum",
                     "homed_axes",
                     "position",
                     "max_accel",
@@ -341,6 +344,8 @@ class KlipperScreen(Gtk.Window):
                 "motion_report": ["live_position", "live_velocity"],
             }
         }
+        if "work_coordinate_systems" in self.printer.get_config_section_list():
+            requested_updates["objects"]["work_coordinate_systems"] = None
         for h in self.printer.get_heaters():
             requested_updates["objects"][h] = ["target", "temperature", "power"]
         for t in self.printer.get_temp_sensors():
