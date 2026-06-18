@@ -852,9 +852,12 @@ class KlipperScreen(Gtk.Window):
         self.state_printing()
 
     def state_printing(self):
-        self.base_panel.update_action_bar()
+        self.show_panel("job_status", remove_all=True)
 
     def state_ready(self, wait=True):
+        # Keep the completed job visible until its timeout expires or the user closes it.
+        if "job_status" in self._cur_panels and wait:
+            return
         if not self.state.initialized:
             logging.debug("Printer not initialized yet")
             self.printer.state = "not ready"
