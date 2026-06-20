@@ -61,6 +61,10 @@ See the quick [installation](docs/installation.md), [controls](docs/controls.md)
 [migration](docs/migration.md) notes for configuration and troubleshooting.
 Optional Klipper-side examples for CNC pause/resume/cancel and parameter-aware homing
 are documented in [Example CNC Macros](docs/cnc-macros.md).
+An adapted Fusion 360 post processor is included in
+[`tools/fusion360`](tools/fusion360/README.md).
+An optional Moonraker processor can generate
+[CNC toolpath thumbnails](tools/moonraker/README.md) after upload.
 
 ## Sonic Pad Debian
 

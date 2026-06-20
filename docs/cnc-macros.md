@@ -3,6 +3,7 @@
 The repository includes optional Klipper configuration examples:
 
 - [`cnc_pause_resume.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_pause_resume.cfg)
+- [`cnc_start_end.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_start_end.cfg)
 - [`cnc_homing_override.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_homing_override.cfg)
 
 Copy the required files into `~/printer_data/config/`, review every machine-specific
@@ -10,6 +11,7 @@ value, then include them from `printer.cfg`:
 
 ```ini
 [include cnc_pause_resume.cfg]
+[include cnc_start_end.cfg]
 [include cnc_homing_override.cfg]
 ```
 
@@ -61,3 +63,17 @@ Adjust `clearance_from_top`, `x_clearance`, `y_clearance`, and `clearance_speed`
 example for the machine. With a Z maximum of 65 mm and `clearance_from_top: 10`, X/Y
 homing requires Z to be at least 55 mm high. Test each axis with the spindle stopped and
 enough physical clearance to reach an emergency stop.
+
+## Fusion Job Start and End
+
+`cnc_start_end.cfg` is separate from pause/resume/cancel because it defines the
+interface used by the Fusion 360 post processor.
+
+- `START_PRINT` validates complete job bounds against machine limits.
+- It does not home, select a WCS, or start the spindle.
+- `END_PRINT` retracts Z, stops the spindle, and parks XY.
+- Include `cnc_pause_resume.cfg` first because `END_PRINT` reuses its park helpers.
+
+Use the bundled
+[Fusion 360 post processor](https://github.com/hudrucan/klipper-screen-cnc/tree/master/tools/fusion360)
+so `START_PRINT` receives complete-file bounds once per generated job.
