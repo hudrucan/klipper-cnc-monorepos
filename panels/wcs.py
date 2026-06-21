@@ -285,6 +285,7 @@ class Panel(ScreenPanel):
         maximum = self._printer.get_stat("toolhead", "axis_maximum")
         tool_position = self._printer.get_stat("motion_report", "live_position")
         homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+        xyz_homed = all(axis in homed_axes for axis in ("x", "y", "z"))
         running = self._printer.state in {"printing", "paused"}
 
         self.labels["active"].set_label(f"Active {'G53' if machine_mode else active}")
@@ -304,16 +305,14 @@ class Panel(ScreenPanel):
                 context.add_class("cnc-wcs-active")
             else:
                 context.remove_class("cnc-wcs-active")
-            self.buttons[name].set_sensitive(not running)
+            self.buttons[name].set_sensitive(not running and xyz_homed)
 
         for axis in self.axes:
             self.buttons[f"zero_{axis}"].set_sensitive(
-                not running and not machine_mode and axis.lower() in homed_axes
+                not running and not machine_mode and xyz_homed
             )
         self.buttons["zero_ALL"].set_sensitive(
-            not running
-            and not machine_mode
-            and all(axis.lower() in homed_axes for axis in self.axes)
+            not running and not machine_mode and xyz_homed
         )
 
     def change_snap(self, widget, snap):
@@ -329,8 +328,8 @@ class Panel(ScreenPanel):
             self._screen.show_popup_message("XY map is locked while a job is running")
             return
         homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
-        if "x" not in homed_axes or "y" not in homed_axes:
-            self._screen.show_popup_message("Home X and Y before using the XY map")
+        if not all(axis in homed_axes for axis in ("x", "y", "z")):
+            self._screen.show_popup_message("Home XYZ before using the WCS map")
             return
 
         state = self._printer.get_stat("work_coordinate_systems") or {}
@@ -374,6 +373,10 @@ class Panel(ScreenPanel):
         if self._printer.state in {"printing", "paused"}:
             self._screen.show_popup_message("WCS cannot be changed while a job is running")
             return
+        homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+        if not all(axis in homed_axes for axis in ("x", "y", "z")):
+            self._screen.show_popup_message("Home XYZ before changing WCS")
+            return
         state = self._printer.get_stat("work_coordinate_systems") or {}
         if name == state.get("active_wcs") and not state.get("machine_mode"):
             return
@@ -393,8 +396,8 @@ class Panel(ScreenPanel):
 
         requested_axes = self.axes if axis == "ALL" else (axis,)
         homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
-        if any(item.lower() not in homed_axes for item in requested_axes):
-            self._screen.show_popup_message("Home the selected axes before setting work zero")
+        if not all(item in homed_axes for item in ("x", "y", "z")):
+            self._screen.show_popup_message("Home XYZ before setting a work zero")
             return
 
         arguments = " ".join(f"{item}0" for item in requested_axes)

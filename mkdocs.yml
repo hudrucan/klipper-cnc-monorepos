@@ -5,6 +5,7 @@ nav:
     - Installation: installation.md
     - CNC Controls: controls.md
     - Example CNC Macros: cnc-macros.md
+    - Experimental Klipper Extras: klipper-extras.md
     - CNC Thumbnails: cnc-thumbnails.md
     - Migration Notes: migration.md
     - Development: development.md

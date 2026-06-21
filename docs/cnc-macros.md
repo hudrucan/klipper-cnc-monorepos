@@ -72,6 +72,9 @@ enough physical clearance to reach an emergency stop.
 interface used by the Fusion 360 post processor.
 
 - `START_PRINT` validates complete job bounds against machine limits.
+- A valid start explicitly selects millimeters and absolute positioning with
+  `G21` and `G90`, preventing a previous manual `G91` jog from leaking into the
+  toolpath.
 - It does not home, select a WCS, or start the spindle.
 - `END_PRINT` retracts Z, stops the spindle, and parks XY.
 - Include `cnc_pause_resume.cfg` first because `END_PRINT` reuses its park helpers.
