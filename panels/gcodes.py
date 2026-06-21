@@ -81,6 +81,10 @@ class Panel(ScreenPanel):
         self.flowbox = Gtk.FlowBox(
             selection_mode=Gtk.SelectionMode.NONE, column_spacing=0, row_spacing=0
         )
+        self.flowbox.set_halign(Gtk.Align.FILL)
+        self.flowbox.set_valign(Gtk.Align.START)
+        self.flowbox.set_hexpand(True)
+        self.flowbox.set_vexpand(False)
         list_mode = self._config.get_main_config().get("print_view", "list")
         logging.info(list_mode)
         self.list_mode = list_mode == "list"
@@ -189,7 +193,7 @@ class Panel(ScreenPanel):
             row.attach(delete, 3, 1, 1, 1)
             if is_file:
                 icon.connect("clicked", self.confirm_print, path)
-                self.image_load(None, icon, self.thumbsize / 2, True, "file")
+                self.image_load(path, icon, self.thumbsize / 2, True, "file")
                 delete.connect("clicked", self.confirm_delete_file, f"gcodes/{path}")
                 rename.connect("clicked", self.show_rename, f"gcodes/{path}")
                 action_icon = "printer" if self._printer.extrudercount > 0 else "load"

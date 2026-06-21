@@ -39,6 +39,7 @@ class Panel(ScreenPanel):
             "y-": self._gtk.Button("arrow-down", "Y-", "color2"),
             "z+": self._gtk.Button("z-farther", "Z+", "color3"),
             "z-": self._gtk.Button("z-closer", "Z-", "color3"),
+            "xy_zero": self._gtk.Button(label="XY0"),
             "home": self._gtk.Button("home", _("Home"), "color4"),
             "motors_off": self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
         }
@@ -48,6 +49,7 @@ class Panel(ScreenPanel):
         self.buttons["y-"].connect("clicked", self.move, "Y", "-")
         self.buttons["z+"].connect("clicked", self.move, "Z", "+")
         self.buttons["z-"].connect("clicked", self.move, "Z", "-")
+        self.buttons["xy_zero"].connect("clicked", self.move_to_xy_zero)
         self.buttons["home"].connect("clicked", self.home)
         script = {"script": "M18"}
         self.buttons["motors_off"].connect(
@@ -94,6 +96,8 @@ class Panel(ScreenPanel):
 
         for name in ("x+", "x-", "y+", "y-", "z+", "z-"):
             self.buttons[name].get_style_context().add_class("cnc-jog-button")
+        self.buttons["xy_zero"].get_style_context().add_class("cnc-jog-button")
+        self.buttons["xy_zero"].get_style_context().add_class("cnc-jog-corner")
 
         xy_center = Gtk.Label(label="XY")
         xy_center.get_style_context().add_class("cnc-jog-center")
@@ -105,6 +109,7 @@ class Panel(ScreenPanel):
         xy_pad.attach(self.buttons[xm], 0, 1, 1, 1)
         xy_pad.attach(xy_center, 1, 1, 1, 1)
         xy_pad.attach(self.buttons[xp], 2, 1, 1, 1)
+        xy_pad.attach(self.buttons["xy_zero"], 0, 2, 1, 1)
         xy_pad.attach(self.buttons[ym], 1, 2, 1, 1)
 
         z_center = Gtk.Label(label="Z")
@@ -307,6 +312,7 @@ class Panel(ScreenPanel):
             running = self._printer.state in {"printing", "paused"}
             self.buttons["home"].set_sensitive(not running)
             self.buttons["motors_off"].set_sensitive(not running)
+            self.buttons["xy_zero"].set_sensitive(self._xy_zero_allowed())
 
     def change_distance(self, widget, distance):
         logging.info(f"### Distance {distance}")
@@ -349,6 +355,47 @@ class Panel(ScreenPanel):
     def _jog_allowed(self, axis):
         homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
         return axis.lower() in homed_axes and self._printer.state not in {"printing", "paused"}
+
+    def _xy_zero_allowed(self):
+        homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+        return "x" in homed_axes and "y" in homed_axes and self._printer.state not in {
+            "printing",
+            "paused",
+        }
+
+    def move_to_xy_zero(self, widget):
+        if not self._xy_zero_allowed():
+            self._screen.show_popup_message(
+                _("Move to XY zero is unavailable while running or before X and Y are homed")
+            )
+            return
+
+        printer_cfg = self._printer.get_config_section("printer")
+        max_velocity = max(int(float(printer_cfg["max_velocity"])), 1)
+        speed = (
+            None
+            if self.ks_printer_cfg is None
+            else self.ks_printer_cfg.getint("move_speed_xy", None)
+        )
+        if speed is None:
+            speed = self._config.get_main_config().getint("move_speed_xy", max_velocity)
+        feedrate = 60 * min(max(1, speed), max_velocity)
+
+        wcs = self._printer.get_stat("work_coordinate_systems") or {}
+        active_wcs = wcs.get("active_wcs", "G54")
+        script = (
+            "SAVE_GCODE_STATE NAME=_ks_cnc_xy_zero\n"
+            f"{active_wcs}\n"
+            "G90\n"
+            f"G1 X0 Y0 F{feedrate}\n"
+            "RESTORE_GCODE_STATE NAME=_ks_cnc_xy_zero MOVE=0"
+        )
+        self._screen._confirm_send_action(
+            widget,
+            _("Move to X0 Y0 in the current WCS?") + "\n\n" + _("Jog Step is ignored."),
+            "printer.gcode.script",
+            {"script": script},
+        )
 
     def home(self, widget):
         if "delta" in self._printer.get_config_section("printer")["kinematics"]:
