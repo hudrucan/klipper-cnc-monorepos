@@ -56,6 +56,8 @@ Home Y, Home Z, Home XY, and Home All actions to remain distinct.
 
 The supplied example assumes Z and Y home at their upper limits while X homes at its
 lower limit. Home All homes Z first, homes and releases X, then homes and releases Y.
+The X/Y release moves use `G91`, so an active WCS offset cannot change their direction
+or clearance distance.
 Individual Home X and Home Y actions remain selectable, but first home Z when its
 position is unknown or below the configured safe height.
 
