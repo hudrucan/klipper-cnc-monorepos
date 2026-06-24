@@ -191,11 +191,16 @@ class Panel(ScreenPanel):
 
         self.labels["active"] = self._status_label("Active G54")
         self.labels["position"] = self._status_label("Work X --  Y --  Z --")
+        machine_button = self._gtk.Button(label="G53", style="color4")
+        machine_button.connect("clicked", self.select_machine_coordinates)
+        machine_button.get_style_context().add_class("buttons_slim")
+        self.buttons["G53"] = machine_button
 
         status = Gtk.Grid(column_homogeneous=True, hexpand=True)
         status.set_column_spacing(8)
         status.attach(self.labels["active"], 0, 0, 1, 1)
         status.attach(self.labels["position"], 1, 0, 1, 1)
+        status.attach(machine_button, 2, 0, 1, 1)
 
         self.machine_map = MachineMap(self)
 
@@ -234,24 +239,6 @@ class Panel(ScreenPanel):
 
             columns = 2 if self._screen.vertical_mode else 3
             selector.attach(card, index % columns, index // columns, 1, 1)
-
-        machine_button = self._gtk.Button(label="G53", style="color4")
-        machine_button.connect("clicked", self.select_machine_coordinates)
-        machine_button.get_style_context().add_class("cnc-wcs-button")
-        self.buttons["G53"] = machine_button
-
-        machine_offset = Gtk.Label(label="Machine\ncoordinates")
-        machine_offset.set_xalign(0)
-        machine_offset.get_style_context().add_class("cnc-wcs-offset")
-
-        machine_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        machine_card.get_style_context().add_class("cnc-wcs-card")
-        machine_card.pack_start(machine_button, False, False, 0)
-        machine_card.pack_start(machine_offset, True, True, 0)
-
-        machine_index = len(self.wcs_names)
-        columns = 2 if self._screen.vertical_mode else 3
-        selector.attach(machine_card, machine_index % columns, machine_index // columns, 1, 1)
 
         zero_grid = Gtk.Grid(column_homogeneous=True)
         zero_grid.set_column_spacing(8)

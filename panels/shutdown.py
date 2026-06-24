@@ -29,7 +29,7 @@ class Panel(ScreenPanel):
         restart = self._gtk.Button("refresh", _("Restart"), "color3")
         restart.connect("clicked", self.reboot_poweroff, "reboot")
 
-        restart_ks = self._gtk.Button("refresh", _("Restart") + " KlipperScreen", "color3")
+        restart_ks = self._gtk.Button("refresh", "Restart Screen CNC", "color3")
         restart_ks.connect("clicked", self._screen.restart_ks)
 
         lock_screen = self._gtk.Button("lock", _("Lock"), "color3")

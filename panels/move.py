@@ -40,7 +40,7 @@ class Panel(ScreenPanel):
             "z+": self._gtk.Button("z-farther", "Z+", "color3"),
             "z-": self._gtk.Button("z-closer", "Z-", "color3"),
             "xy_zero": self._gtk.Button(label="XY0"),
-            "tool_setter": self._gtk.Button(label="Setter"),
+            "tool_setter": self._gtk.Button(label="Set"),
             "home": self._gtk.Button("home", _("Home"), "color4"),
             "motors_off": self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
         }
@@ -147,9 +147,10 @@ class Panel(ScreenPanel):
             jog_area.attach(z_pad, 3, 0, 1, 1)
             jog_area.attach(actions, 4, 0, 1, 1)
 
-        distgrid = Gtk.Grid()
+        distgrid = Gtk.Grid(column_homogeneous=True, hexpand=True)
         for j, i in enumerate(self.distances):
             self.labels[i] = self._gtk.Button(label=i)
+            self.labels[i].set_hexpand(True)
             self.labels[i].set_direction(Gtk.TextDirection.LTR)
             self.labels[i].connect("clicked", self.change_distance, i)
             ctx = self.labels[i].get_style_context()
