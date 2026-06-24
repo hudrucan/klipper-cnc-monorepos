@@ -67,6 +67,7 @@ class Panel(ScreenPanel):
         tv.connect("size-allocate", self._autoscroll)
         tv.connect("touch-event", self._screen.remove_keyboard)
         tv.connect("button-press-event", self._screen.remove_keyboard)
+        tv.connect("button-release-event", self.copy_console_command)
 
         sw.add(tv)
 
@@ -93,6 +94,12 @@ class Panel(ScreenPanel):
         next_command.set_tooltip_text("Next MDI command")
         next_command.connect("clicked", self.history_next)
 
+        complete = self._gtk.Button(label="↹")
+        complete.get_style_context().add_class("buttons_slim")
+        complete.set_hexpand(False)
+        complete.set_tooltip_text("Complete command")
+        complete.connect("clicked", self.complete_command)
+
         send = self._gtk.Button(
             "resume", " " + _("Send") + " ", None, 0.66, Gtk.PositionType.RIGHT, 1
         )
@@ -104,6 +111,7 @@ class Panel(ScreenPanel):
         ebox.add(previous)
         ebox.add(next_command)
         ebox.add(entry)
+        ebox.add(complete)
         ebox.add(send)
 
         suggestions = Gtk.FlowBox()
@@ -118,6 +126,7 @@ class Panel(ScreenPanel):
         self.labels.update(
             {
                 "entry": entry,
+                "complete": complete,
                 "send": send,
                 "suggestions": suggestions,
                 "sw": sw,
@@ -335,6 +344,11 @@ class Panel(ScreenPanel):
             box.add(button)
         box.show_all()
 
+    def complete_command(self, widget=None):
+        if not self.suggestions:
+            self.update_suggestions()
+        self.apply_suggestion(widget)
+
     def clear_suggestions(self):
         self.suggestions = []
         box = self.labels.get("suggestions")
@@ -358,10 +372,56 @@ class Panel(ScreenPanel):
     def on_entry_key_press(self, widget, event):
         if event.keyval not in (Gdk.KEY_Tab, Gdk.KEY_KP_Tab):
             return False
-        if not self.suggestions:
-            self.update_suggestions()
-        self.apply_suggestion(widget)
+        self.complete_command(widget)
         return True
+
+    def copy_console_command(self, widget, event):
+        if event.button != 1:
+            return False
+        try:
+            buffer_x, buffer_y = widget.window_to_buffer_coords(
+                Gtk.TextWindowType.TEXT, int(event.x), int(event.y)
+            )
+            result = widget.get_iter_at_location(buffer_x, buffer_y)
+            if isinstance(result, tuple):
+                text_iter = next(item for item in result if hasattr(item, "copy"))
+            else:
+                text_iter = result
+            start = text_iter.copy()
+            start.set_line_offset(0)
+            end = text_iter.copy()
+            if not end.ends_line():
+                end.forward_to_line_end()
+            line = self.labels["tb"].get_text(start, end, False).strip()
+        except Exception:
+            logging.exception("Unable to read console line")
+            return False
+
+        command = self.command_from_console_line(line)
+        if not command:
+            return False
+        self.labels["entry"].set_text(command)
+        self.labels["entry"].set_position(-1)
+        self.labels["entry"].grab_focus_without_selecting()
+        self.update_suggestions()
+        return False
+
+    def command_from_console_line(self, line):
+        match = re.match(r"^\d{2}:\d{2}:\d{2}\s+(.+)$", line)
+        if not match:
+            return None
+        command = match.group(1).strip()
+        if not command:
+            return None
+        token = command.split(maxsplit=1)[0].upper()
+        candidates = set(self.get_command_candidates())
+        if (
+            token in candidates
+            or re.match(r"^[GMT]\d+(?:\.\d+)?$", token)
+            or command in self.command_history
+        ):
+            return command
+        return None
 
     def mdi_available(self):
         return self._printer.state in {"ready", "paused"}
@@ -381,4 +441,5 @@ class Panel(ScreenPanel):
 
         available = self.mdi_available()
         self.labels["entry"].set_sensitive(available)
+        self.labels["complete"].set_sensitive(available)
         self.labels["send"].set_sensitive(available)
