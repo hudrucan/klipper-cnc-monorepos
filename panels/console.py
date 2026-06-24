@@ -9,7 +9,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from datetime import datetime
 
-from gi.repository import Gdk, Gtk
+from gi.repository import Gtk
 
 from ks_includes.screen_panel import ScreenPanel
 
@@ -28,7 +28,6 @@ class Panel(ScreenPanel):
         self.autoscroll = True
         self.command_history = []
         self.history_position = 0
-        self.suggestions = []
         self.history_path = self.get_history_path()
         self.load_command_history()
 
@@ -76,8 +75,6 @@ class Panel(ScreenPanel):
         entry.connect("button-press-event", self._screen.show_keyboard)
         entry.connect("touch-event", self._screen.show_keyboard)
         entry.connect("activate", self._send_command)
-        entry.connect("changed", self.update_suggestions)
-        entry.connect("key-press-event", self.on_entry_key_press)
         entry.set_placeholder_text("Enter one MDI command")
         entry.grab_focus_without_selecting()
 
@@ -93,13 +90,6 @@ class Panel(ScreenPanel):
         next_command.set_tooltip_text("Next MDI command")
         next_command.connect("clicked", self.history_next)
 
-        complete = self._gtk.Button(label="  ↹  ")
-        complete.get_style_context().add_class("buttons_slim")
-        complete.set_hexpand(False)
-        complete.set_size_request(54, -1)
-        complete.set_tooltip_text("Complete command")
-        complete.connect("clicked", self.complete_command)
-
         send = self._gtk.Button(label=_("Send"))
         send.get_style_context().add_class("buttons_slim")
 
@@ -109,20 +99,12 @@ class Panel(ScreenPanel):
         ebox.add(previous)
         ebox.add(next_command)
         ebox.add(entry)
-        ebox.add(complete)
         ebox.add(send)
-
-        suggestions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-        suggestions.set_hexpand(True)
-        suggestions.set_no_show_all(True)
-        suggestions.hide()
 
         self.labels.update(
             {
                 "entry": entry,
-                "complete": complete,
                 "send": send,
-                "suggestions": suggestions,
                 "sw": sw,
                 "tb": tb,
                 "tv": tv,
@@ -133,7 +115,6 @@ class Panel(ScreenPanel):
         content_box.pack_start(status, False, False, 0)
         content_box.pack_start(options, False, False, 5)
         content_box.add(sw)
-        content_box.pack_end(suggestions, False, False, 0)
         content_box.pack_end(ebox, False, False, 0)
         self.content.add(content_box)
 
@@ -214,7 +195,6 @@ class Panel(ScreenPanel):
             return
 
         self.labels["entry"].set_text("")
-        self.clear_suggestions()
         self._screen.remove_keyboard()
 
         self.remember_command(cmd)
@@ -226,7 +206,6 @@ class Panel(ScreenPanel):
         self.clear()
         self.update_machine_state()
         self._screen._ws.send_method("server.gcode_store", {"count": 100}, self.gcode_response)
-        self.update_suggestions()
 
     @staticmethod
     def get_history_path():
@@ -288,90 +267,6 @@ class Panel(ScreenPanel):
         self.labels["entry"].set_text(command)
         self.labels["entry"].set_position(-1)
 
-    def get_command_candidates(self):
-        commands = set()
-        available = self._printer.available_commands or {}
-        if isinstance(available, dict):
-            commands.update(available.keys())
-        elif isinstance(available, (list, tuple, set)):
-            commands.update(available)
-        commands.update(self._printer.get_gcode_macros())
-        return sorted(
-            {
-                str(command).strip().upper()
-                for command in commands
-                if str(command).strip() and not str(command).strip().startswith("_")
-            }
-        )
-
-    def command_prefix(self):
-        text = self.labels["entry"].get_text().lstrip()
-        if not text:
-            return "", ""
-        parts = text.split(maxsplit=1)
-        prefix = parts[0].upper()
-        suffix = parts[1] if len(parts) > 1 else ""
-        return prefix, suffix
-
-    def update_suggestions(self, widget=None):
-        prefix, _ = self.command_prefix()
-        if not prefix:
-            self.clear_suggestions()
-            return
-
-        matches = [
-            command for command in self.get_command_candidates()
-            if command.startswith(prefix) and command != prefix
-        ][:3]
-        self.suggestions = matches
-
-        box = self.labels["suggestions"]
-        for child in box.get_children():
-            box.remove(child)
-        if not matches:
-            box.hide()
-            return
-        for command in matches:
-            button = self._gtk.Button(label=command)
-            button.get_style_context().add_class("buttons_slim")
-            button.set_hexpand(True)
-            button.connect("clicked", self.apply_suggestion, command)
-            box.pack_start(button, True, True, 0)
-        box.show_all()
-        box.set_visible(True)
-
-    def complete_command(self, widget=None):
-        self.update_suggestions()
-
-    def clear_suggestions(self):
-        self.suggestions = []
-        box = self.labels.get("suggestions")
-        if not box:
-            return
-        for child in box.get_children():
-            box.remove(child)
-        box.hide()
-
-    def apply_suggestion(self, widget, command=None):
-        command = command or (self.suggestions[0] if self.suggestions else None)
-        if not command:
-            return
-        _, suffix = self.command_prefix()
-        text = f"{command} {suffix}".rstrip()
-        if not suffix:
-            text += " "
-        self.labels["entry"].set_text(text)
-        self.labels["entry"].set_position(-1)
-
-    def on_entry_key_press(self, widget, event):
-        if event.keyval not in (Gdk.KEY_Tab, Gdk.KEY_KP_Tab):
-            return False
-        if not self.suggestions:
-            self.update_suggestions()
-        else:
-            self.apply_suggestion(widget)
-        return True
-
     def copy_console_command(self, widget, event):
         if event.button != 1:
             return False
@@ -400,7 +295,6 @@ class Panel(ScreenPanel):
         self.labels["entry"].set_text(command)
         self.labels["entry"].set_position(-1)
         self.labels["entry"].grab_focus_without_selecting()
-        self.update_suggestions()
         return False
 
     def command_from_console_line(self, line):
@@ -412,8 +306,7 @@ class Panel(ScreenPanel):
             return None
         raw_token = command.split(maxsplit=1)[0]
         token = raw_token.upper()
-        candidates = set(self.get_command_candidates())
-        if token in candidates or command in self.command_history:
+        if command in self.command_history:
             return command
         if re.match(r"^[GMT]\d+(?:\.\d+)?$", token):
             return command
@@ -443,5 +336,4 @@ class Panel(ScreenPanel):
 
         available = self.mdi_available()
         self.labels["entry"].set_sensitive(available)
-        self.labels["complete"].set_sensitive(available)
         self.labels["send"].set_sensitive(available)
