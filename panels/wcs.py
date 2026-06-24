@@ -235,6 +235,24 @@ class Panel(ScreenPanel):
             columns = 2 if self._screen.vertical_mode else 3
             selector.attach(card, index % columns, index // columns, 1, 1)
 
+        machine_button = self._gtk.Button(label="G53", style="color4")
+        machine_button.connect("clicked", self.select_machine_coordinates)
+        machine_button.get_style_context().add_class("cnc-wcs-button")
+        self.buttons["G53"] = machine_button
+
+        machine_offset = Gtk.Label(label="Machine\ncoordinates")
+        machine_offset.set_xalign(0)
+        machine_offset.get_style_context().add_class("cnc-wcs-offset")
+
+        machine_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        machine_card.get_style_context().add_class("cnc-wcs-card")
+        machine_card.pack_start(machine_button, False, False, 0)
+        machine_card.pack_start(machine_offset, True, True, 0)
+
+        machine_index = len(self.wcs_names)
+        columns = 2 if self._screen.vertical_mode else 3
+        selector.attach(machine_card, machine_index % columns, machine_index // columns, 1, 1)
+
         zero_grid = Gtk.Grid(column_homogeneous=True)
         zero_grid.set_column_spacing(8)
         for index, axis in enumerate((*self.axes, "ALL")):
@@ -306,6 +324,11 @@ class Panel(ScreenPanel):
             else:
                 context.remove_class("cnc-wcs-active")
             self.buttons[name].set_sensitive(not running and xyz_homed)
+        if machine_mode:
+            self.buttons["G53"].get_style_context().add_class("cnc-wcs-active")
+        else:
+            self.buttons["G53"].get_style_context().remove_class("cnc-wcs-active")
+        self.buttons["G53"].set_sensitive(not running and xyz_homed)
 
         for axis in self.axes:
             self.buttons[f"zero_{axis}"].set_sensitive(
@@ -384,6 +407,23 @@ class Panel(ScreenPanel):
             widget,
             "printer.gcode.script",
             {"script": name},
+        )
+
+    def select_machine_coordinates(self, widget):
+        if self._printer.state in {"printing", "paused"}:
+            self._screen.show_popup_message("WCS cannot be changed while a job is running")
+            return
+        homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+        if not all(axis in homed_axes for axis in ("x", "y", "z")):
+            self._screen.show_popup_message("Home XYZ before changing WCS")
+            return
+        state = self._printer.get_stat("work_coordinate_systems") or {}
+        if state.get("machine_mode"):
+            return
+        self._screen._send_action(
+            widget,
+            "printer.gcode.script",
+            {"script": "G53"},
         )
 
     def confirm_zero(self, widget, axis):

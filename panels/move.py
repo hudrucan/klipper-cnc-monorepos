@@ -40,6 +40,7 @@ class Panel(ScreenPanel):
             "z+": self._gtk.Button("z-farther", "Z+", "color3"),
             "z-": self._gtk.Button("z-closer", "Z-", "color3"),
             "xy_zero": self._gtk.Button(label="XY0"),
+            "tool_setter": self._gtk.Button(label="Setter"),
             "home": self._gtk.Button("home", _("Home"), "color4"),
             "motors_off": self._gtk.Button("motor-off", _("Disable Motors"), "color4"),
         }
@@ -50,6 +51,7 @@ class Panel(ScreenPanel):
         self.buttons["z+"].connect("clicked", self.move, "Z", "+")
         self.buttons["z-"].connect("clicked", self.move, "Z", "-")
         self.buttons["xy_zero"].connect("clicked", self.move_to_xy_zero)
+        self.buttons["tool_setter"].connect("clicked", self.move_to_tool_setter)
         self.buttons["home"].connect("clicked", self.home)
         script = {"script": "M18"}
         self.buttons["motors_off"].connect(
@@ -98,6 +100,9 @@ class Panel(ScreenPanel):
             self.buttons[name].get_style_context().add_class("cnc-jog-button")
         self.buttons["xy_zero"].get_style_context().add_class("cnc-jog-button")
         self.buttons["xy_zero"].get_style_context().add_class("cnc-jog-corner")
+        self.buttons["tool_setter"].get_style_context().add_class("cnc-jog-button")
+        self.buttons["tool_setter"].get_style_context().add_class("cnc-jog-corner")
+        self.buttons["tool_setter"].set_sensitive(False)
 
         xy_center = Gtk.Label(label="XY")
         xy_center.get_style_context().add_class("cnc-jog-center")
@@ -106,6 +111,7 @@ class Panel(ScreenPanel):
         xy_pad.set_column_spacing(4)
         xy_pad.get_style_context().add_class("cnc-jog-pad")
         xy_pad.attach(self.buttons[yp], 1, 0, 1, 1)
+        xy_pad.attach(self.buttons["tool_setter"], 2, 0, 1, 1)
         xy_pad.attach(self.buttons[xm], 0, 1, 1, 1)
         xy_pad.attach(xy_center, 1, 1, 1, 1)
         xy_pad.attach(self.buttons[xp], 2, 1, 1, 1)
@@ -280,6 +286,7 @@ class Panel(ScreenPanel):
             or "motion_report" in data
             or "work_coordinate_systems" in data
             or "print_stats" in data
+            or "tool_setter" in data
         ):
             homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
             position = self._printer.get_stat("gcode_move", "gcode_position")
@@ -313,6 +320,7 @@ class Panel(ScreenPanel):
             self.buttons["home"].set_sensitive(not running)
             self.buttons["motors_off"].set_sensitive(not running)
             self.buttons["xy_zero"].set_sensitive(self._xy_zero_allowed())
+            self.buttons["tool_setter"].set_sensitive(self._tool_setter_allowed())
 
     def change_distance(self, widget, distance):
         logging.info(f"### Distance {distance}")
@@ -363,6 +371,25 @@ class Panel(ScreenPanel):
             "paused",
         }
 
+    def _tool_setter_status(self):
+        status = self._printer.get_stat("tool_setter") or {}
+        if status.get("setter_x") is None or status.get("setter_y") is None:
+            return None
+        return status
+
+    def _tool_setter_allowed(self):
+        homed_axes = self._printer.get_stat("toolhead", "homed_axes") or ""
+        return (
+            self._tool_setter_status() is not None
+            and all(axis in homed_axes for axis in ("x", "y", "z"))
+            and self._printer.state not in {"printing", "paused"}
+        )
+
+    @staticmethod
+    def _values(values):
+        values = values if isinstance(values, (list, tuple)) else ()
+        return [float(values[index]) if len(values) > index else 0.0 for index in range(3)]
+
     def move_to_xy_zero(self, widget):
         if not self._xy_zero_allowed():
             self._screen.show_popup_message(
@@ -393,6 +420,80 @@ class Panel(ScreenPanel):
         self._screen._confirm_send_action(
             widget,
             _("Move to X0 Y0 in the current WCS?") + "\n\n" + _("Jog Step is ignored."),
+            "printer.gcode.script",
+            {"script": script},
+        )
+
+    def move_to_tool_setter(self, widget):
+        tool_setter = self._tool_setter_status()
+        if tool_setter is None:
+            self._screen.show_popup_message(_("Tool setter position is not configured"))
+            return
+        if not self._tool_setter_allowed():
+            self._screen.show_popup_message(
+                _("Move to tool setter is unavailable while running or before XYZ are homed")
+            )
+            return
+
+        axis_min = self._printer.get_stat("toolhead", "axis_minimum")
+        axis_max = self._printer.get_stat("toolhead", "axis_maximum")
+        setter_x = float(tool_setter["setter_x"])
+        setter_y = float(tool_setter["setter_y"])
+        safe_z = tool_setter.get("safe_z")
+        safe_z = float(safe_z) if safe_z is not None else float(axis_max[2])
+        if (
+            setter_x < float(axis_min[0])
+            or setter_x > float(axis_max[0])
+            or setter_y < float(axis_min[1])
+            or setter_y > float(axis_max[1])
+            or safe_z < float(axis_min[2])
+            or safe_z > float(axis_max[2])
+        ):
+            self._screen.show_popup_message(_("Tool setter position is outside machine limits"))
+            return
+
+        printer_cfg = self._printer.get_config_section("printer")
+        max_velocity = max(int(float(printer_cfg["max_velocity"])), 1)
+        max_z_velocity = max_velocity
+        if "max_z_velocity" in printer_cfg:
+            max_z_velocity = max(int(float(printer_cfg["max_z_velocity"])), 1)
+        speed_xy = (
+            None
+            if self.ks_printer_cfg is None
+            else self.ks_printer_cfg.getint("move_speed_xy", None)
+        )
+        speed_z = (
+            None
+            if self.ks_printer_cfg is None
+            else self.ks_printer_cfg.getint("move_speed_z", None)
+        )
+        if speed_xy is None:
+            speed_xy = self._config.get_main_config().getint("move_speed_xy", max_velocity)
+        if speed_z is None:
+            speed_z = self._config.get_main_config().getint("move_speed_z", max_z_velocity)
+        feedrate_xy = 60 * min(max(1, speed_xy), max_velocity)
+        feedrate_z = 60 * min(max(1, speed_z), max_z_velocity)
+
+        wcs = self._printer.get_stat("work_coordinate_systems") or {}
+        active_wcs = wcs.get("active_wcs", "G54")
+        offset = self._values(wcs.get("wcs", {}).get(active_wcs))
+        target_x = setter_x - offset[0]
+        target_y = setter_y - offset[1]
+        target_z = safe_z - offset[2]
+
+        script = (
+            "SAVE_GCODE_STATE NAME=_ks_cnc_tool_setter\n"
+            f"{active_wcs}\n"
+            "G90\n"
+            f"G1 Z{target_z:.4f} F{feedrate_z}\n"
+            f"G1 X{target_x:.4f} Y{target_y:.4f} F{feedrate_xy}\n"
+            "RESTORE_GCODE_STATE NAME=_ks_cnc_tool_setter MOVE=0"
+        )
+        self._screen._confirm_send_action(
+            widget,
+            _("Move to the configured tool setter position?")
+            + "\n\n"
+            + _("Jog Step is ignored."),
             "printer.gcode.script",
             {"script": script},
         )

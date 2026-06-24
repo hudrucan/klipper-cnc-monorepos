@@ -464,6 +464,9 @@ class ToolSetter:
     def get_status(self, eventtime=None):
         return {
             "triggered": self.probe_triggered,
+            "setter_x": self.setter_x,
+            "setter_y": self.setter_y,
+            "safe_z": self.safe_z,
             "calibration": self.calibration,
             "last_result": self.last_result,
         }
