@@ -708,6 +708,10 @@ trough {
     font-size: 0.85em;
 }
 
+.cnc-probe-action {
+    min-height: 3.3em;
+}
+
 .cnc-override-value {
     font-family: monospace;
     font-size: 4em;

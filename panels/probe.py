@@ -8,23 +8,23 @@ from ks_includes.screen_panel import ScreenPanel
 
 class Panel(ScreenPanel):
     touch_actions = (
-        ("query_touch", "Check", "QUERY_TOUCH_PROBE", False, "Report touch probe state"),
         ("stock_z", "Stock Z0", "FIND_SURFACE_Z SET_ZERO=1", True, "Probe stock surface and set WCS Z0"),
+        ("center_xy", "Center XY", "FIND_CENTER_XY", True, "Probe X/Y edges and set center XY0"),
+        ("bore", "Bore XY", "PROBE_BORE SET_ZERO=1", True, "Probe a bore and set center XY0"),
+        ("query_touch", "Check", "QUERY_TOUCH_PROBE", False, "Report touch probe state"),
         ("x_min", "X Min", "FIND_EDGE_X_NEG SET_ZERO=1", True, "Probe X-min edge and set WCS X0"),
         ("x_max", "X Max", "FIND_EDGE_X_POS SET_ZERO=1", True, "Probe X-max edge and set WCS X0"),
         ("y_min", "Y Min", "FIND_EDGE_Y_NEG SET_ZERO=1", True, "Probe Y-min edge and set WCS Y0"),
         ("y_max", "Y Max", "FIND_EDGE_Y_POS SET_ZERO=1", True, "Probe Y-max edge and set WCS Y0"),
         ("center_x", "Center X", "FIND_CENTER_X", True, "Probe both X edges and set center X0"),
         ("center_y", "Center Y", "FIND_CENTER_Y", True, "Probe both Y edges and set center Y0"),
-        ("center_xy", "Center XY", "FIND_CENTER_XY", True, "Probe X/Y edges and set center XY0"),
-        ("bore", "Bore XY", "PROBE_BORE SET_ZERO=1", True, "Probe a bore and set center XY0"),
     )
     setter_actions = (
+        ("apply_bit", "Apply Bit Z", "SET_BIT_Z APPLY=1", True, "Measure bit and update active WCS Z"),
+        ("check_bit", "Check Bit Z", "SET_BIT_Z", True, "Measure bit and report WCS Z delta"),
+        ("calibrate", "Calibrate Z", "CALIBRATE_SETTER_Z", True, "Store fixed setter height after stock Z0"),
         ("query_setter", "Check", "QUERY_TOOL_SETTER", False, "Report tool setter state"),
         ("accuracy", "Accuracy", "TOOL_SETTER_ACCURACY", True, "Probe setter repeatability"),
-        ("calibrate", "Calibrate Z", "CALIBRATE_SETTER_Z", True, "Store fixed setter height after stock Z0"),
-        ("check_bit", "Check Bit Z", "SET_BIT_Z", True, "Measure bit and report WCS Z delta"),
-        ("apply_bit", "Apply Bit Z", "SET_BIT_Z APPLY=1", True, "Measure bit and update active WCS Z"),
     )
 
     def __init__(self, screen, title):
@@ -53,9 +53,9 @@ class Panel(ScreenPanel):
         actions = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         actions.pack_start(
             self._section(
-                "Touch Probe",
-                "Find stock edges, centers, bore centers, and stock Z with the spindle-mounted probe.",
-                self.touch_actions,
+                "Tool Setter",
+                "Calibrate the fixed setter, check repeatability, and re-touch Z after bit changes.",
+                self.setter_actions,
             ),
             False,
             False,
@@ -63,9 +63,9 @@ class Panel(ScreenPanel):
         )
         actions.pack_start(
             self._section(
-                "Tool Setter",
-                "Calibrate the fixed setter, check repeatability, and re-touch Z after bit changes.",
-                self.setter_actions,
+                "Touch Probe",
+                "Find stock edges, centers, bore centers, and stock Z with the spindle-mounted probe.",
+                self.touch_actions,
             ),
             False,
             False,
@@ -119,6 +119,7 @@ class Panel(ScreenPanel):
         for index, (name, label, script, confirm, tooltip) in enumerate(actions):
             button = self._gtk.Button(None, label, f"color{index % 4 + 1}")
             button.get_style_context().add_class("buttons_slim")
+            button.get_style_context().add_class("cnc-probe-action")
             button.set_tooltip_text(tooltip)
             button.connect("clicked", self.run_action, name, script, confirm)
             self.buttons[name] = button
