@@ -21,7 +21,6 @@ COLORS = {
     "warning": "#c9c9c9",
 }
 
-
 class Panel(ScreenPanel):
     def __init__(self, screen, title):
         title = title or "MDI"
@@ -94,9 +93,10 @@ class Panel(ScreenPanel):
         next_command.set_tooltip_text("Next MDI command")
         next_command.connect("clicked", self.history_next)
 
-        complete = self._gtk.Button(label="↹")
+        complete = self._gtk.Button(label="  ↹  ")
         complete.get_style_context().add_class("buttons_slim")
         complete.set_hexpand(False)
+        complete.set_size_request(54, -1)
         complete.set_tooltip_text("Complete command")
         complete.connect("clicked", self.complete_command)
 
@@ -112,14 +112,10 @@ class Panel(ScreenPanel):
         ebox.add(complete)
         ebox.add(send)
 
-        suggestions = Gtk.FlowBox()
-        suggestions.set_max_children_per_line(4)
-        suggestions.set_min_children_per_line(1)
-        suggestions.set_selection_mode(Gtk.SelectionMode.NONE)
-        suggestions.set_homogeneous(True)
-        suggestions.set_row_spacing(4)
-        suggestions.set_column_spacing(4)
+        suggestions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        suggestions.set_hexpand(True)
         suggestions.set_no_show_all(True)
+        suggestions.hide()
 
         self.labels.update(
             {
@@ -326,7 +322,7 @@ class Panel(ScreenPanel):
         matches = [
             command for command in self.get_command_candidates()
             if command.startswith(prefix) and command != prefix
-        ][:8]
+        ][:3]
         self.suggestions = matches
 
         box = self.labels["suggestions"]
@@ -338,9 +334,11 @@ class Panel(ScreenPanel):
         for command in matches:
             button = self._gtk.Button(label=command)
             button.get_style_context().add_class("buttons_slim")
+            button.set_hexpand(True)
             button.connect("clicked", self.apply_suggestion, command)
-            box.add(button)
+            box.pack_start(button, True, True, 0)
         box.show_all()
+        box.set_visible(True)
 
     def complete_command(self, widget=None):
         self.update_suggestions()
