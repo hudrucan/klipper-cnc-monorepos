@@ -100,9 +100,7 @@ class Panel(ScreenPanel):
         complete.set_tooltip_text("Complete command")
         complete.connect("clicked", self.complete_command)
 
-        send = self._gtk.Button(
-            "resume", " " + _("Send") + " ", None, 0.66, Gtk.PositionType.RIGHT, 1
-        )
+        send = self._gtk.Button(label=_("Send"))
         send.get_style_context().add_class("buttons_slim")
 
         send.set_hexpand(False)
@@ -345,9 +343,7 @@ class Panel(ScreenPanel):
         box.show_all()
 
     def complete_command(self, widget=None):
-        if not self.suggestions:
-            self.update_suggestions()
-        self.apply_suggestion(widget)
+        self.update_suggestions()
 
     def clear_suggestions(self):
         self.suggestions = []
@@ -372,7 +368,10 @@ class Panel(ScreenPanel):
     def on_entry_key_press(self, widget, event):
         if event.keyval not in (Gdk.KEY_Tab, Gdk.KEY_KP_Tab):
             return False
-        self.complete_command(widget)
+        if not self.suggestions:
+            self.update_suggestions()
+        else:
+            self.apply_suggestion(widget)
         return True
 
     def copy_console_command(self, widget, event):
@@ -413,12 +412,17 @@ class Panel(ScreenPanel):
         command = match.group(1).strip()
         if not command:
             return None
-        token = command.split(maxsplit=1)[0].upper()
+        raw_token = command.split(maxsplit=1)[0]
+        token = raw_token.upper()
         candidates = set(self.get_command_candidates())
+        if token in candidates or command in self.command_history:
+            return command
+        if re.match(r"^[GMT]\d+(?:\.\d+)?$", token):
+            return command
         if (
-            token in candidates
-            or re.match(r"^[GMT]\d+(?:\.\d+)?$", token)
-            or command in self.command_history
+            raw_token == token
+            and re.match(r"^[A-Z_][A-Z0-9_]*$", token)
+            and not token.startswith(("OK", "B:", "C:"))
         ):
             return command
         return None
