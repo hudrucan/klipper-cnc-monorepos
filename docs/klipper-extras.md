@@ -77,8 +77,10 @@ Example configuration:
 ```ini
 [touch_probe]
 pin: ^!PC5
+surface_result_file: ~/printer_data/config/touch_probe_surface.json
+travel_speed: 40
 fast_speed: 10
-slow_speed: 0.5
+slow_speed: 1
 max_distance: 50
 retract_distance: 2
 tip_diameter: 4.97
@@ -135,18 +137,39 @@ FIND_SURFACE_Z SET_ZERO=1
 FIND_CENTER_XY DISTANCE_X=40 DISTANCE_Y=30 SET_ZERO=1
 ```
 
+`FIND_EDGE_X_NEG` and `FIND_EDGE_Y_NEG` move toward the machine-negative side.
+`FIND_EDGE_X_POS` and `FIND_EDGE_Y_POS` move toward the machine-positive side.
+The bundled `FIND_STOCK_*_MIN/MAX` macro wrappers assume the probe starts
+outside the target stock edge and moves inward until it touches the stock:
+X-min moves X+, X-max moves X-, Y-min moves Y+, and Y-max moves Y-.
+
 This does not use `G92`. The probe result is captured in machine coordinates,
 then converted into a persistent WCS offset even though the tool has already
 retracted from the contact surface.
+
+Surface tilt measuring:
+
+```gcode
+MEASURE_SURFACE_TILT COORD=MACHINE PATTERN=CORNERS_4
+MEASURE_SURFACE_TILT COORD=WCS WIDTH=100 HEIGHT=80 PATTERN=CROSS_5
+MEASURE_SURFACE_TILT COORD=WCS X_MIN=0 X_MAX=100 Y_MIN=0 Y_MAX=80
+```
+
+The latest surface map is exposed through the `touch_probe` status object and
+persisted to `surface_result_file` so Klipper Screen CNC can redraw the most
+recent map after a refresh or restart. This is report-only; it does not enable
+automatic Z compensation.
 
 ## Calibration
 
 `trigger_offset` is the empirical XY overtravel correction used together
 with half the probe-tip diameter. It must be zero or positive.
 
-Probe parameters such as `FAST_SPEED`, `SLOW_SPEED`, `MAX_DISTANCE`,
-`RETRACT_DISTANCE`, `SAMPLES`, `Z_HOP`, `Z_HOP_SPEED`, and `OVERSHOOT` may be
-overridden per command.
+Probe parameters such as `TRAVEL_SPEED`, `FAST_SPEED`, `SLOW_SPEED`,
+`MAX_DISTANCE`, `RETRACT_DISTANCE`, `SAMPLES`, `Z_HOP`, `Z_HOP_SPEED`, and
+`OVERSHOOT` may be overridden per command. `TRAVEL_SPEED` controls non-contact
+XY repositioning between probe points; `FAST_SPEED` and `SLOW_SPEED` control
+the probing moves toward the contact.
 
 ## Fixed Tool Setter
 

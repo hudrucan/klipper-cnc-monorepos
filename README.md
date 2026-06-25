@@ -57,6 +57,11 @@ sudo systemctl restart klipper-screen
 The installer creates `klipper-screen.service` and uses `~/.klipper-screen-env` for
 the Python virtual environment by default.
 
+For Mainsail/Fluidd updates, add the optional Moonraker
+`[update_manager klipper-screen-cnc]` block from
+[installation](docs/installation.md#moonraker-update-manager). The repo includes
+`scripts/KlipperScreen-update.sh` for non-interactive updates.
+
 See the quick [installation](docs/installation.md), [controls](docs/controls.md), and
 [migration](docs/migration.md) notes for configuration and troubleshooting.
 Optional Klipper-side examples for CNC pause/resume/cancel and parameter-aware homing

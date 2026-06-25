@@ -34,6 +34,20 @@ cutting-feed-only override.
 The configured velocity and acceleration limits remain hard runtime limits. Motion
 Override cannot command movement beyond those limits.
 
+## MDI
+
+The MDI panel stores the last 50 submitted commands and reloads them after
+Klipper Screen CNC restarts. By default the history is saved to
+`~/printer_data/config/mdi_history.json`, falling back to
+`~/.config/klipper_screen/mdi_history.json` when `printer_data` is unavailable.
+
+Override the location in `klipper_screen.conf`:
+
+```ini
+[main]
+mdi_history_path: ~/printer_data/config/cnc_mdi_history.json
+```
+
 ## Emergency stop
 
 Emergency Stop sends Moonraker's printer emergency-stop request. A touchscreen control

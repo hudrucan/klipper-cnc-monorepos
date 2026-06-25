@@ -1,7 +1,7 @@
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+from gi.repository import GLib, Gtk
 
 from ks_includes.screen_panel import ScreenPanel
 
@@ -105,35 +105,30 @@ class Panel(ScreenPanel):
         self.labels["detail"] = Gtk.Label(label="Measure stock or machine area. Report only; no compensation.", xalign=0, wrap=True)
         self.labels["detail"].get_style_context().add_class("cnc-probe-detail")
 
-        mode = Gtk.Grid(column_homogeneous=True)
-        mode.set_column_spacing(8)
+        options = Gtk.Grid(column_homogeneous=True)
+        options.set_column_spacing(8)
         for index, (key, label) in enumerate((("WCS", "Stock / WCS"), ("MACHINE", "Machine"))):
             button = self._gtk.Button(label=label, style=f"color{index + 1}")
             button.get_style_context().add_class("buttons_slim")
             button.connect("clicked", self.set_coord, key)
             self.buttons[f"coord_{key}"] = button
-            mode.attach(button, index, 0, 1, 1)
-
-        pattern = Gtk.Grid(column_homogeneous=True)
-        pattern.set_column_spacing(8)
+            options.attach(button, index, 0, 1, 1)
         for index, (key, label) in enumerate((("CORNERS_4", "Corners 4"), ("CROSS_5", "Cross 5"))):
             button = self._gtk.Button(label=label, style=f"color{index + 3}")
             button.get_style_context().add_class("buttons_slim")
             button.connect("clicked", self.set_pattern, key)
             self.buttons[f"pattern_{key}"] = button
-            pattern.attach(button, index, 0, 1, 1)
+            options.attach(button, index + 2, 0, 1, 1)
 
-        fields = Gtk.Grid(column_homogeneous=True)
-        fields.set_column_spacing(8)
-        fields.set_row_spacing(6)
-        for index, name in enumerate(("WIDTH", "HEIGHT", "X_MIN", "X_MAX", "Y_MIN", "Y_MAX", "MARGIN")):
-            entry = Gtk.Entry(placeholder_text=name.replace("_", " ").title())
-            entry.set_input_purpose(Gtk.InputPurpose.NUMBER)
-            entry.connect("touch-event", self.show_keyboard)
-            entry.connect("button-press-event", self.show_keyboard)
-            entry.connect("focus-out-event", self._screen.remove_keyboard)
-            self.entries[name] = entry
-            fields.attach(entry, index % 2, index // 2, 1, 1)
+        fields = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        fields.get_style_context().add_class("cnc-surface-fields")
+        fields.pack_start(self._field_row("Size", ("WIDTH", "HEIGHT", "MARGIN")), False, False, 0)
+        fields.pack_start(
+            self._field_row("Bounds override", ("X_MIN", "X_MAX", "Y_MIN", "Y_MAX")),
+            False,
+            False,
+            0,
+        )
 
         actions = Gtk.Grid(column_homogeneous=True)
         actions.set_column_spacing(8)
@@ -151,11 +146,10 @@ class Panel(ScreenPanel):
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         content.pack_start(self.labels["summary"], False, False, 0)
         content.pack_start(self.labels["detail"], False, False, 0)
-        content.pack_start(mode, False, False, 0)
-        content.pack_start(pattern, False, False, 0)
+        content.pack_start(self.map, False, False, 0)
+        content.pack_start(options, False, False, 0)
         content.pack_start(fields, False, False, 0)
         content.pack_start(actions, False, False, 0)
-        content.pack_start(self.map, True, True, 0)
         scroll = self._gtk.ScrolledWindow()
         scroll.get_style_context().add_class("gcode-list-scroll")
         scroll.add(content)
@@ -168,12 +162,33 @@ class Panel(ScreenPanel):
         label.get_style_context().add_class("cnc-status")
         return label
 
+    def _field_row(self, title, names):
+        row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+        label = Gtk.Label(label=title, xalign=0)
+        label.get_style_context().add_class("cnc-probe-detail")
+        grid = Gtk.Grid(column_homogeneous=True)
+        grid.set_column_spacing(8)
+        columns = 2 if self._screen.vertical_mode else len(names)
+        for index, name in enumerate(names):
+            entry = Gtk.Entry(placeholder_text=name.replace("_", " ").title())
+            entry.set_input_purpose(Gtk.InputPurpose.NUMBER)
+            entry.connect("touch-event", self.show_keyboard)
+            entry.connect("button-press-event", self.show_keyboard)
+            entry.connect("focus-out-event", self._screen.remove_keyboard)
+            self.entries[name] = entry
+            grid.attach(entry, index % columns, index // columns, 1, 1)
+        row.pack_start(label, False, False, 0)
+        row.pack_start(grid, False, False, 0)
+        return row
+
     def activate(self):
         self.update_status()
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "touch_probe" in data:
             self.update_status()
+        elif action == "notify_gcode_response" and "Surface tilt" in str(data):
+            GLib.timeout_add_seconds(1, self.update_status)
 
     def surface_result(self):
         status = self._printer.get_stat("touch_probe") or {}
@@ -202,7 +217,11 @@ class Panel(ScreenPanel):
                 context.remove_class("button_active")
         self.entries["WIDTH"].set_sensitive(self.coord == "WCS")
         self.entries["HEIGHT"].set_sensitive(self.coord == "WCS")
-        self.entries["MARGIN"].set_placeholder_text("Margin (5 stock / 10 machine)")
+        self.entries["WIDTH"].set_placeholder_text("Stock width")
+        self.entries["HEIGHT"].set_placeholder_text("Stock height")
+        self.entries["MARGIN"].set_placeholder_text(
+            "Margin 5" if self.coord == "WCS" else "Margin 10"
+        )
 
     def show_keyboard(self, entry, event):
         self._screen.show_keyboard(entry, event)
@@ -241,6 +260,11 @@ class Panel(ScreenPanel):
 
     def confirm_measure(self, script):
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        content.set_size_request(min(int(self._screen.width * 0.78), 780), -1)
+        content.set_margin_start(18)
+        content.set_margin_end(18)
+        content.set_margin_top(18)
+        content.set_margin_bottom(18)
         heading = Gtk.Label(
             label="<big><b>Measure Surface Tilt</b></big>",
             xalign=0,
@@ -266,6 +290,9 @@ class Panel(ScreenPanel):
         content.pack_start(note, False, False, 0)
         content.pack_start(checklist, False, False, 0)
         content.pack_start(command, False, False, 0)
+        wrapper = Gtk.Alignment.new(0.5, 0.5, 0, 0)
+        wrapper.set_vexpand(True)
+        wrapper.add(content)
         buttons = [
             {"name": "Run", "response": Gtk.ResponseType.OK, "style": "dialog-info"},
             {"name": "Cancel", "response": Gtk.ResponseType.CANCEL, "style": "dialog-error"},
@@ -273,13 +300,15 @@ class Panel(ScreenPanel):
         if self._screen.confirm is not None:
             self._gtk.remove_dialog(self._screen.confirm)
         self._screen.confirm = self._gtk.Dialog(
-            "Measure Surface", buttons, content, self.run_measure, script
+            "Measure Surface", buttons, wrapper, self.run_measure, script
         )
 
     def run_measure(self, dialog, response_id, script):
         self._gtk.remove_dialog(dialog)
         if response_id == Gtk.ResponseType.OK:
             self._screen._send_action(None, "printer.gcode.script", {"script": script})
+            GLib.timeout_add_seconds(2, self.update_status)
+            GLib.timeout_add_seconds(6, self.update_status)
 
     def update_status(self, *args):
         result = self.surface_result()

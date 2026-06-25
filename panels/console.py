@@ -207,8 +207,19 @@ class Panel(ScreenPanel):
         self.update_machine_state()
         self._screen._ws.send_method("server.gcode_store", {"count": 100}, self.gcode_response)
 
-    @staticmethod
-    def get_history_path():
+    def get_history_path(self):
+        configured = self._config.get_main_config().get(
+            "mdi_history_path", fallback=None
+        )
+        if configured:
+            path = os.path.expanduser(configured)
+            if not os.path.isabs(path):
+                path = os.path.join(
+                    os.path.expanduser("~/printer_data/config"),
+                    path,
+                )
+            return path
+
         directory = os.path.expanduser("~/printer_data/config")
         if not os.path.isdir(directory):
             directory = os.path.expanduser("~/.config/klipper_screen")

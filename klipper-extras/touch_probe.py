@@ -6,8 +6,11 @@
 # Experimental: prove every direction at low speed with the spindle disabled
 # before relying on these commands near a workpiece.
 
+import json
 import logging
 import math
+import os
+import tempfile
 
 DIRECTIONS = {
     "X+": (0, 1),
@@ -52,6 +55,7 @@ class TouchProbe:
     def __init__(self, config):
         self.printer = config.get_printer()
         self.gcode = self.printer.lookup_object("gcode")
+        self.travel_speed = config.getfloat("travel_speed", 40.0, above=0.0)
         self.fast_speed = config.getfloat("fast_speed", 10.0, above=0.0)
         self.slow_speed = config.getfloat("slow_speed", 1.0, above=0.0)
         self.max_distance = config.getfloat("max_distance", 50.0, above=0.0)
@@ -67,6 +71,12 @@ class TouchProbe:
         self.overshoot = config.getfloat("overshoot", 5.0, above=0.0)
         self.samples = config.getint("samples", 1, minval=1)
         self.spindle_object = config.get("spindle_object", "output_pin spindle")
+        self.surface_result_path = os.path.expanduser(
+            config.get(
+                "surface_result_file",
+                "~/printer_data/config/touch_probe_surface.json",
+            )
+        )
 
         self.endstops = {
             0: ProbeEndstopWrapper(config, "x"),
@@ -99,6 +109,63 @@ class TouchProbe:
         }
         for name, handler in commands.items():
             self.gcode.register_command(name, handler)
+
+        self.printer.register_event_handler("klippy:ready", self._handle_ready)
+
+    def _handle_ready(self):
+        self._load_surface_result()
+
+    def _load_surface_result(self):
+        if not os.path.exists(self.surface_result_path):
+            return
+        try:
+            with open(self.surface_result_path, "r") as handle:
+                data = json.load(handle)
+            if data.get("version") != 1:
+                return
+            result = data.get("surface_result")
+            if not isinstance(result, dict):
+                return
+            points = result.get("points")
+            summary = result.get("summary")
+            if not isinstance(points, list) or not isinstance(summary, dict):
+                return
+            self.surface_result = result
+        except Exception:
+            logging.exception(
+                "Touch probe: could not read %s", self.surface_result_path
+            )
+
+    def _persist_surface_result(self):
+        if self.surface_result is None:
+            return
+        directory = os.path.dirname(self.surface_result_path) or "."
+        os.makedirs(directory, exist_ok=True)
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                "w", dir=directory, prefix=".touch-probe-surface-", delete=False
+            ) as handle:
+                temporary = handle.name
+                json.dump(
+                    {"version": 1, "surface_result": self.surface_result},
+                    handle,
+                    indent=2,
+                    sort_keys=True,
+                )
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, self.surface_result_path)
+        except Exception:
+            logging.exception(
+                "Touch probe: could not write %s", self.surface_result_path
+            )
+            if temporary and os.path.exists(temporary):
+                try:
+                    os.unlink(temporary)
+                except OSError:
+                    pass
 
     def _kinematics_status(self):
         eventtime = self.printer.get_reactor().monotonic()
@@ -160,6 +227,9 @@ class TouchProbe:
         position[1] = y
         toolhead.manual_move(position, speed)
         toolhead.wait_moves()
+
+    def _travel_speed(self, gcmd):
+        return gcmd.get_float("TRAVEL_SPEED", self.travel_speed, above=0.0)
 
     def _probe(self, gcmd, direction):
         axis, sense = DIRECTIONS[direction]
@@ -346,7 +416,7 @@ class TouchProbe:
         self._move_axis(
             axis,
             edge[axis],
-            gcmd.get_float("FAST_SPEED", self.fast_speed, above=0.0),
+            self._travel_speed(gcmd),
         )
         gcmd.respond_info(
             "%s edge: raw %.6f, compensated %.6f%s"
@@ -468,14 +538,14 @@ class TouchProbe:
         return x + float(offset[0]), y + float(offset[1])
 
     def _probe_surface_point(self, gcmd, coord, name, x, y):
-        fast_speed = gcmd.get_float("FAST_SPEED", self.fast_speed, above=0.0)
+        travel_speed = self._travel_speed(gcmd)
         machine_x, machine_y = self._to_machine_xy(gcmd, coord, x, y)
         x_min, x_max = self._limits(0)
         y_min, y_max = self._limits(1)
         if not (x_min <= machine_x <= x_max and y_min <= machine_y <= y_max):
             raise gcmd.error("Surface point %s is outside machine limits" % (name,))
         self._z_hop_up(gcmd)
-        self._move_xy(machine_x, machine_y, fast_speed)
+        self._move_xy(machine_x, machine_y, travel_speed)
         hit = self._probe(gcmd, "Z-")
         surface = self._surface_z(hit)
         return {
@@ -543,8 +613,7 @@ class TouchProbe:
         ]
         self._z_hop_up(gcmd)
         if gcmd.get_int("RETURN", 1, minval=0, maxval=1):
-            fast_speed = gcmd.get_float("FAST_SPEED", self.fast_speed, above=0.0)
-            self._move_xy(start[0], start[1], fast_speed)
+            self._move_xy(start[0], start[1], self._travel_speed(gcmd))
         summary = self._surface_summary(pattern, measured)
         self.surface_result = {
             "type": "tilt",
@@ -556,14 +625,16 @@ class TouchProbe:
             "summary": summary,
         }
         self.last_command = gcmd.get_command()
+        self._persist_surface_result()
         gcmd.respond_info(
-            "Surface tilt %s %s: range %.6f, high %s, low %s"
+            "Surface tilt %s %s: range %.6f, high %s, low %s, saved %s"
             % (
                 coord,
                 pattern,
                 summary["range"],
                 summary["high_point"],
                 summary["low_point"],
+                self.surface_result_path,
             )
         )
 
@@ -573,9 +644,7 @@ class TouchProbe:
         self._require_safe(gcmd, "XYZ")
         direction_pos = AXIS_NAMES[axis] + "+"
         direction_neg = AXIS_NAMES[axis] + "-"
-        fast_speed = gcmd.get_float(
-            "FAST_SPEED", self.fast_speed, above=0.0
-        )
+        travel_speed = self._travel_speed(gcmd)
         overshoot = gcmd.get_float(
             "OVERSHOOT", self.overshoot, above=0.0
         )
@@ -587,12 +656,12 @@ class TouchProbe:
         travel = min(axis_max, requested_travel)
         if travel < requested_travel - 0.000001 or travel <= current[axis]:
             raise gcmd.error("Insufficient travel to cross the workpiece")
-        self._move_axis(axis, travel, fast_speed)
+        self._move_axis(axis, travel, travel_speed)
         self._z_hop_down(gcmd, actual_hop)
         negative = self._edge(self._probe(gcmd, direction_neg), direction_neg)
         final_hop = self._z_hop_up(gcmd)
         center = (positive[axis] + negative[axis]) / 2.0
-        self._move_axis(axis, center, fast_speed)
+        self._move_axis(axis, center, travel_speed)
         if set_zero:
             self._set_wcs(
                 gcmd,
@@ -666,9 +735,7 @@ class TouchProbe:
         overshoot = gcmd.get_float(
             "OVERSHOOT", self.overshoot, above=0.0
         )
-        fast_speed = gcmd.get_float(
-            "FAST_SPEED", self.fast_speed, above=0.0
-        )
+        travel_speed = self._travel_speed(gcmd)
         center_x, x_hop = self._find_center(
             gcmd,
             0,
@@ -684,7 +751,7 @@ class TouchProbe:
             raise gcmd.error(
                 "Insufficient negative Y travel to start center probing"
             )
-        self._move_axis(1, y_start, fast_speed)
+        self._move_axis(1, y_start, travel_speed)
         self._z_hop_down(gcmd, x_hop)
 
         center_y, _ = self._find_center(
@@ -702,24 +769,22 @@ class TouchProbe:
         self._require_safe(gcmd, "XYZ")
         toolhead = self.printer.lookup_object("toolhead")
         start = list(toolhead.get_position())
-        fast_speed = gcmd.get_float(
-            "FAST_SPEED", self.fast_speed, above=0.0
-        )
+        travel_speed = self._travel_speed(gcmd)
         edges = {}
         for direction in ("X+", "X-", "Y+", "Y-"):
             edges[direction] = self._edge(
                 self._probe(gcmd, direction), direction
             )
-            self._move_axis(0, start[0], fast_speed)
-            self._move_axis(1, start[1], fast_speed)
+            self._move_axis(0, start[0], travel_speed)
+            self._move_axis(1, start[1], travel_speed)
         center_x = (edges["X+"][0] + edges["X-"][0]) / 2.0
         center_y = (edges["Y+"][1] + edges["Y-"][1]) / 2.0
         diameter_x = abs(edges["X+"][0] - edges["X-"][0])
         diameter_y = abs(edges["Y+"][1] - edges["Y-"][1])
         average_diameter = (diameter_x + diameter_y) / 2.0
         actual_hop = self._z_hop_up(gcmd)
-        self._move_axis(0, center_x, fast_speed)
-        self._move_axis(1, center_y, fast_speed)
+        self._move_axis(0, center_x, travel_speed)
+        self._move_axis(1, center_y, travel_speed)
         self._set_wcs(
             gcmd,
             [center_x, center_y, start[2] + actual_hop],

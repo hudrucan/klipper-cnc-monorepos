@@ -53,6 +53,36 @@ Runtime locations:
 ```sh
 cd ~/klipper-screen-cnc
 git pull --ff-only
+./scripts/KlipperScreen-update.sh
+```
+
+The update script refreshes the Python environment and restarts
+`klipper-screen.service`.
+
+## Moonraker update manager
+
+Add this to `~/printer_data/config/moonraker.conf` if you want updates from
+Mainsail/Fluidd's update manager:
+
+```ini
+[update_manager klipper-screen-cnc]
+type: git_repo
+path: ~/klipper-screen-cnc
+origin: https://github.com/hudrucan/klipper-screen-cnc.git
+primary_branch: master
+managed_services: klipper-screen
+install_script: scripts/KlipperScreen-update.sh
+```
+
+Restart Moonraker after editing its config:
+
+```sh
+sudo systemctl restart moonraker
+```
+
+Manual restart remains:
+
+```sh
 sudo systemctl restart klipper-screen
 ```
 

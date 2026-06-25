@@ -13,10 +13,10 @@ class Panel(ScreenPanel):
         ("bore", "Bore XY", "PROBE_BORE SET_ZERO=1", True, "Probe a bore and set center XY0"),
         ("surface", "Surface", "PANEL:surface_measure", False, "Measure and view surface tilt"),
         ("query_touch", "Check", "QUERY_TOUCH_PROBE", False, "Report touch probe state"),
-        ("x_min", "X Min", "FIND_EDGE_X_NEG SET_ZERO=1", True, "Probe X-min edge and set WCS X0"),
-        ("x_max", "X Max", "FIND_EDGE_X_POS SET_ZERO=1", True, "Probe X-max edge and set WCS X0"),
-        ("y_min", "Y Min", "FIND_EDGE_Y_NEG SET_ZERO=1", True, "Probe Y-min edge and set WCS Y0"),
-        ("y_max", "Y Max", "FIND_EDGE_Y_POS SET_ZERO=1", True, "Probe Y-max edge and set WCS Y0"),
+        ("x_min", "X Min", "FIND_EDGE_X_POS SET_ZERO=1", True, "Start outside X-min and probe toward X+ to set WCS X0"),
+        ("x_max", "X Max", "FIND_EDGE_X_NEG SET_ZERO=1", True, "Start outside X-max and probe toward X- to set WCS X0"),
+        ("y_min", "Y Min", "FIND_EDGE_Y_POS SET_ZERO=1", True, "Start outside Y-min and probe toward Y+ to set WCS Y0"),
+        ("y_max", "Y Max", "FIND_EDGE_Y_NEG SET_ZERO=1", True, "Start outside Y-max and probe toward Y- to set WCS Y0"),
         ("center_x", "Center X", "FIND_CENTER_X", True, "Probe both X edges and set center X0"),
         ("center_y", "Center Y", "FIND_CENTER_Y", True, "Probe both Y edges and set center Y0"),
     )
@@ -290,10 +290,10 @@ class Panel(ScreenPanel):
     def confirm_cnc_action(self, widget, name, script):
         data = {
             "stock_z": ("Set Stock Z0", "Updates active WCS Z", "This will probe Z and set active WCS Z0."),
-            "x_min": ("Probe X Min", "Updates active WCS X", "This will probe the X-min edge and set X0."),
-            "x_max": ("Probe X Max", "Updates active WCS X", "This will probe the X-max edge and set X0."),
-            "y_min": ("Probe Y Min", "Updates active WCS Y", "This will probe the Y-min edge and set Y0."),
-            "y_max": ("Probe Y Max", "Updates active WCS Y", "This will probe the Y-max edge and set Y0."),
+            "x_min": ("Probe X Min", "Updates active WCS X", "Start outside the X-min edge. This will move toward X+ and set X0."),
+            "x_max": ("Probe X Max", "Updates active WCS X", "Start outside the X-max edge. This will move toward X- and set X0."),
+            "y_min": ("Probe Y Min", "Updates active WCS Y", "Start outside the Y-min edge. This will move toward Y+ and set Y0."),
+            "y_max": ("Probe Y Max", "Updates active WCS Y", "Start outside the Y-max edge. This will move toward Y- and set Y0."),
             "center_x": ("Center Stock X", "Updates active WCS X", "This will probe both X edges and set center X0."),
             "center_y": ("Center Stock Y", "Updates active WCS Y", "This will probe both Y edges and set center Y0."),
             "center_xy": ("Center Stock XY", "Updates active WCS XY", "This will probe X/Y edges and set center XY0."),
@@ -315,6 +315,11 @@ class Panel(ScreenPanel):
 
     def _show_cnc_confirm(self, title, badge, message, script, callback, *args):
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        content.set_size_request(min(int(self._screen.width * 0.78), 780), -1)
+        content.set_margin_start(18)
+        content.set_margin_end(18)
+        content.set_margin_top(18)
+        content.set_margin_bottom(18)
         heading = Gtk.Label(label=f"<big><b>{title}</b></big>", xalign=0, use_markup=True)
         badge_label = Gtk.Label(label=badge, xalign=0)
         badge_label.get_style_context().add_class("cnc-confirm-badge")
@@ -332,13 +337,16 @@ class Panel(ScreenPanel):
         content.pack_start(note, False, False, 0)
         content.pack_start(checklist, False, False, 0)
         content.pack_start(command, False, False, 0)
+        wrapper = Gtk.Alignment.new(0.5, 0.5, 0, 0)
+        wrapper.set_vexpand(True)
+        wrapper.add(content)
         buttons = [
             {"name": "Run", "response": Gtk.ResponseType.OK, "style": "dialog-info"},
             {"name": "Cancel", "response": Gtk.ResponseType.CANCEL, "style": "dialog-error"},
         ]
         if self._screen.confirm is not None:
             self._gtk.remove_dialog(self._screen.confirm)
-        self._screen.confirm = self._gtk.Dialog(title, buttons, content, callback, *args)
+        self._screen.confirm = self._gtk.Dialog(title, buttons, wrapper, callback, *args)
 
     def _run_confirmed_script(self, dialog, response_id, script):
         self._gtk.remove_dialog(dialog)
