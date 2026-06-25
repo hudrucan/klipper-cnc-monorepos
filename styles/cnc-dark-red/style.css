@@ -2,14 +2,14 @@
 @define-color text #edf2f2;
 @define-color text-inv #080a0b;
 @define-color bg #0c0f11;
-@define-color buttons-bg #12171a;
-@define-color panel #151b1f;
-@define-color card #1a2227;
-@define-color card-2 #212b31;
+@define-color buttons-bg #101417;
+@define-color panel #13181c;
+@define-color card #171d21;
+@define-color card-2 #1c2429;
 @define-color active #d63b3b;
-@define-color active-dark #2a1718;
-@define-color lines #5f6b70;
-@define-color lines-soft alpha(#edf2f2, 0.14);
+@define-color active-dark #201213;
+@define-color lines #4e5a60;
+@define-color lines-soft alpha(#edf2f2, 0.10);
 
 @define-color color1 #ff4b42;
 @define-color color2 #9edc3a;
@@ -45,32 +45,32 @@ button.buttons_slim,
 .dialog button {
     background-color: @buttons-bg;
     border-style: solid;
-    border-width: .12em;
+    border-width: .08em;
     border-color: @lines-soft;
-    border-radius: .14em;
+    border-radius: .1em;
 }
 
 button.color1 {
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @color1;
 }
 
 button.color2 {
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @color2;
 }
 
 button.color3 {
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @color3;
 }
 
 button.color4 {
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @color4;
 }
 
@@ -107,17 +107,17 @@ button.active,
 button.update {
     background-color: @buttons-bg;
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @echo;
-    border-radius: .14em;
+    border-radius: .1em;
 }
 
 button.invalid {
     background-color: @buttons-bg;
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @error;
-    border-radius: .14em;
+    border-radius: .1em;
 }
 
 menu,
@@ -172,21 +172,21 @@ scrollbar slider {
 .horizontal_togglebuttons {
     background-color: @buttons-bg;
     border-color: @lines;
-    border-width: .12em;
+    border-width: .08em;
     border-right-width: 0;
     min-height: 2.9em;
     border-radius: 0;
 }
 
 .horizontal_togglebuttons:first-child {
-    border-top-left-radius: .3em;
-    border-bottom-left-radius: .3em;
+    border-top-left-radius: .18em;
+    border-bottom-left-radius: .18em;
 }
 
 .horizontal_togglebuttons:last-child {
-    border-top-right-radius: .3em;
-    border-bottom-right-radius: .3em;
-    border-right-width: .12em;
+    border-top-right-radius: .18em;
+    border-bottom-right-radius: .18em;
+    border-right-width: .08em;
 }
 
 .dialog {
@@ -234,16 +234,16 @@ scrollbar slider {
 .cnc-history-card,
 .cnc-dro-card {
     background-color: @panel;
-    border-color: alpha(@text, 0.18);
-    border-width: .1em;
+    border-color: alpha(@text, 0.12);
+    border-width: .08em;
     border-style: solid;
 }
 
 .cnc-status,
 .cnc-confirm-script {
     background-color: @panel;
-    border-color: alpha(@text, 0.16);
-    border-width: .1em;
+    border-color: alpha(@text, 0.12);
+    border-width: .08em;
     border-style: solid;
 }
 
@@ -287,9 +287,9 @@ scrollbar slider {
 .cnc-wcs-card,
 .cnc-wcs-button {
     background-color: @panel;
-    border-color: alpha(@text, 0.18);
+    border-color: alpha(@text, 0.12);
     border-style: solid;
-    border-width: .1em;
+    border-width: .08em;
 }
 
 .cnc-wcs-active {
@@ -302,8 +302,8 @@ scrollbar slider {
     background-color: @buttons-bg;
     border-color: @lines-soft;
     border-style: solid;
-    border-width: .12em;
-    border-radius: .14em;
+    border-width: .08em;
+    border-radius: .1em;
 }
 
 .cnc-jog-pad,
@@ -322,23 +322,23 @@ scrollbar slider {
 .cnc-file-start,
 .cnc-probe-action,
 .cnc-wcs-button {
-    border-radius: .14em;
+    border-radius: .1em;
 }
 
 .cnc-probe-action {
     background-color: @buttons-bg;
     border-color: @lines-soft;
     border-style: solid;
-    border-width: .12em;
+    border-width: .08em;
 }
 
 .cnc-file-start {
     border-color: @lines-soft;
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
 }
 
 .dialog button {
-    border-radius: .18em;
+    border-radius: .12em;
 }
 
 .dialog-primary,
@@ -347,26 +347,26 @@ scrollbar slider {
 .dialog-error,
 .dialog-warning {
     border-style: solid;
-    border-width: .12em;
+    border-width: .08em;
     border-color: @lines-soft;
 }
 
 .dialog-primary,
 .dialog-info {
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
 }
 
 .dialog-secondary {
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
     border-bottom-color: @color3;
 }
 
 .dialog-error {
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
 }
 
 .dialog-warning {
-    border-bottom-width: .34em;
+    border-bottom-width: .22em;
 }
 
 .numpad_key,

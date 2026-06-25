@@ -84,13 +84,16 @@ type: git_repo
 path: ~/klipper-screen-cnc
 origin: https://github.com/hudrucan/klipper-screen-cnc.git
 primary_branch: master
+is_system_service: False
 install_script: scripts/KlipperScreen-update.sh
 ```
 
 Do not set `managed_services` unless your systemd unit really exists under that
-name. The bundled update script copies Klipper CNC extras automatically when it
-can find the Klipper checkout, then restarts `klipper-screen.service`.
-Set `KLIPPERSCREEN_SERVICE` only if your systemd unit uses a different name.
+name. `is_system_service: False` prevents Moonraker from guessing a
+`klipper-screen-cnc.service` unit name; the bundled update script copies
+Klipper CNC extras automatically when it can find the Klipper checkout, then
+restarts `klipper-screen.service`. Set `KLIPPERSCREEN_SERVICE` only if your
+systemd unit uses a different name.
 
 Restart Moonraker after editing its config:
 

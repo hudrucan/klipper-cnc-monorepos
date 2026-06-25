@@ -60,7 +60,8 @@ the Python virtual environment by default.
 For Mainsail/Fluidd updates, add the optional Moonraker
 `[update_manager klipper-screen-cnc]` block from
 [installation](docs/installation.md#moonraker-update-manager). The repo includes
-`scripts/KlipperScreen-update.sh` for non-interactive updates.
+`scripts/KlipperScreen-update.sh` for non-interactive updates and should set
+`is_system_service: False` in that Moonraker block.
 
 See the quick [installation](docs/installation.md), [controls](docs/controls.md), and
 [migration](docs/migration.md) notes for configuration and troubleshooting.

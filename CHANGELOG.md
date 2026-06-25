@@ -2,6 +2,15 @@
 This just tracks the most notable changes, if you want all the details checkout the commit history.
 Probably all versions contain changes regarding documentation, translation, fixes and other minor refactors
 
+## cnc-v0.1.0  (Jun 26, 2026)
+
+* fork baseline established for CNC-focused KlipperScreen deployments
+* add CNC-specific jog, WCS, DRO, spindle, probe, and feed override panels
+* add Klipper extras for persistent work coordinate systems, touch probing, and tool setter workflows
+* add CNC macro examples, Fusion 360 post processor integration, and optional Moonraker thumbnail generation
+* add result history, surface measure, and experimental `cnc-dark-red` theme
+* document Moonraker update-manager setup with `is_system_service: False`
+
 ## Current master
 
 * add support to use Unix socket for lower overhead on local instances
