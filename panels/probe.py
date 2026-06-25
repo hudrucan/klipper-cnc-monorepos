@@ -11,7 +11,6 @@ class Panel(ScreenPanel):
         ("stock_z", "Stock Z0", "FIND_SURFACE_Z SET_ZERO=1", True, "Probe stock surface and set WCS Z0"),
         ("center_xy", "Center XY", "FIND_CENTER_XY", True, "Probe X/Y edges and set center XY0"),
         ("bore", "Bore XY", "PROBE_BORE SET_ZERO=1", True, "Probe a bore and set center XY0"),
-        ("surface", "Surface", "PANEL:surface_measure", False, "Measure and view surface tilt"),
         ("query_touch", "Check", "QUERY_TOUCH_PROBE", False, "Report touch probe state"),
         ("x_min", "X Min", "FIND_EDGE_X_POS SET_ZERO=1", True, "Start outside X-min and probe toward X+ to set WCS X0"),
         ("x_max", "X Max", "FIND_EDGE_X_NEG SET_ZERO=1", True, "Start outside X-max and probe toward X- to set WCS X0"),
@@ -26,6 +25,9 @@ class Panel(ScreenPanel):
         ("calibrate", "Calibrate Z", "CALIBRATE_SETTER_Z", True, "Store fixed setter height after stock Z0"),
         ("query_setter", "Check", "QUERY_TOOL_SETTER", False, "Report tool setter state"),
         ("accuracy", "Accuracy", "TOOL_SETTER_ACCURACY", True, "Probe setter repeatability"),
+    )
+    surface_actions = (
+        ("surface", "Surface Map", "PANEL:surface_measure", False, "Measure and view surface tilt"),
     )
 
     def __init__(self, screen, title):
@@ -67,6 +69,16 @@ class Panel(ScreenPanel):
                 "Touch Probe",
                 "Find stock edges, centers, bore centers, and stock Z with the spindle-mounted probe.",
                 self.touch_actions,
+            ),
+            False,
+            False,
+            0,
+        )
+        actions.pack_start(
+            self._section(
+                "Surface Measure",
+                "Inspect stock or machine surface tilt without changing compensation.",
+                self.surface_actions,
             ),
             False,
             False,

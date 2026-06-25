@@ -347,6 +347,10 @@ class KlipperScreen(Gtk.Window):
         }
         if "work_coordinate_systems" in self.printer.get_config_section_list():
             requested_updates["objects"]["work_coordinate_systems"] = None
+        if "touch_probe" in self.printer.get_config_section_list():
+            requested_updates["objects"]["touch_probe"] = None
+        if "tool_setter" in self.printer.get_config_section_list():
+            requested_updates["objects"]["tool_setter"] = None
         for h in self.printer.get_heaters():
             requested_updates["objects"][h] = ["target", "temperature", "power"]
         for t in self.printer.get_temp_sensors():
