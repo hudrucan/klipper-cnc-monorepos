@@ -42,8 +42,12 @@ class SurfaceMap(Gtk.DrawingArea):
         z_max = max(z_values)
         z_range = max(z_max - z_min, 0.000001)
 
-        left, top = 36, 30
-        plot_w, plot_h = width - 72, height - 62
+        label_size = min(max(width * 0.014, 12), 15)
+        marker_radius = min(max(width * 0.006, 5), 7)
+        left = 36
+        top = 22
+        plot_w = width - left * 2
+        plot_h = height - top * 2
         ctx.set_source_rgba(1, 1, 1, 0.10)
         ctx.rectangle(left, top, plot_w, plot_h)
         ctx.stroke()
@@ -59,11 +63,27 @@ class SurfaceMap(Gtk.DrawingArea):
         for point in points:
             x, y = self._plot(point["x"], point["y"], left, top, plot_w, plot_h, x_min, x_max, y_min, y_max)
             ratio = (float(point["z"]) - z_min) / z_range
-            ctx.set_source_rgb(0.28 + 0.72 * ratio, 0.55 - 0.25 * ratio, 1.0 - 0.78 * ratio)
-            ctx.arc(x, y, 22, 0, 6.283)
+            color = (
+                0.28 + 0.72 * ratio,
+                0.55 - 0.25 * ratio,
+                1.0 - 0.78 * ratio,
+            )
+            ctx.set_source_rgb(*color)
+            ctx.arc(x, y, marker_radius, 0, 6.283)
             ctx.fill()
-            self._text(ctx, x - 18, y - 2, point.get("name", ""), 10, 1.0, dark=True)
-            self._text(ctx, x - 22, y + 12, f"{float(point['z']):+.3f}", 10, 1.0, dark=True)
+            self._point_label(
+                ctx,
+                x,
+                y,
+                point.get("name", ""),
+                f"{float(point['z']):+.3f}",
+                color,
+                label_size,
+                width,
+                height,
+                left + plot_w / 2,
+                top + plot_h / 2,
+            )
         return False
 
     def _plot(self, x, y, left, top, width, height, x_min, x_max, y_min, y_max):
@@ -91,6 +111,65 @@ class SurfaceMap(Gtk.DrawingArea):
         ctx.set_font_size(size)
         ctx.move_to(x, y)
         ctx.show_text(text)
+
+    @staticmethod
+    def _center_text(ctx, x, y, text, size, alpha=1.0, dark=False):
+        ctx.set_source_rgba(0, 0, 0, alpha) if dark else ctx.set_source_rgba(1, 1, 1, alpha)
+        ctx.set_font_size(size)
+        extents = ctx.text_extents(str(text))
+        ctx.move_to(
+            x - extents.width / 2 - extents.x_bearing,
+            y - extents.height / 2 - extents.y_bearing,
+        )
+        ctx.show_text(str(text))
+
+    def _point_label(self, ctx, x, y, name, value, color, label_size, width, height, center_x, center_y):
+        text = f"{name} {value}"
+        padding_x = 11
+        padding_y = 6
+        offset = 18
+        ctx.set_font_size(label_size)
+        extents = ctx.text_extents(text)
+        box_w = max(extents.width + padding_x * 2, 96)
+        box_h = extents.height + padding_y * 2
+
+        dx = 0
+        dy = 0
+        if abs(x - center_x) > box_w / 3:
+            dx = offset if x < center_x else -offset
+        if abs(y - center_y) > box_h / 2:
+            dy = offset if y < center_y else -offset
+
+        box_x = min(max(x + dx - box_w / 2, 12), width - box_w - 12)
+        box_y = min(max(y + dy - box_h / 2, 12), height - box_h - 12)
+
+        ctx.set_source_rgba(0.09, 0.13, 0.15, 0.94)
+        self._rounded_rect(ctx, box_x, box_y, box_w, box_h, 8)
+        ctx.fill()
+        ctx.set_source_rgba(color[0], color[1], color[2], 0.95)
+        ctx.set_line_width(2)
+        self._rounded_rect(ctx, box_x, box_y, box_w, box_h, 8)
+        ctx.stroke()
+
+        self._center_text(
+            ctx,
+            box_x + box_w / 2,
+            box_y + box_h / 2,
+            text,
+            label_size,
+            1.0,
+            dark=False,
+        )
+
+    @staticmethod
+    def _rounded_rect(ctx, x, y, width, height, radius):
+        radius = min(radius, width / 2, height / 2)
+        ctx.new_sub_path()
+        ctx.arc(x + width - radius, y + radius, radius, -1.5708, 0)
+        ctx.arc(x + width - radius, y + height - radius, radius, 0, 1.5708)
+        ctx.arc(x + radius, y + height - radius, radius, 1.5708, 3.1416)
+        ctx.arc(x + radius, y + radius, radius, 3.1416, 4.7124)
+        ctx.close_path()
 
 
 class Panel(ScreenPanel):

@@ -56,8 +56,22 @@ git pull --ff-only
 ./scripts/KlipperScreen-update.sh
 ```
 
-The update script refreshes the Python environment and restarts
-`klipper-screen.service`.
+The update script refreshes the Python environment, copies bundled
+`klipper-extras/*.py` modules into `~/klipper/klippy/extras/` when that Klipper
+checkout exists, restarts Klipper when possible, and restarts the screen
+service.
+
+If Klipper lives outside `~/klipper`, set `KLIPPER_PATH`:
+
+```sh
+KLIPPER_PATH=/path/to/klipper ./scripts/KlipperScreen-update.sh
+```
+
+To skip installing the experimental Klipper extras:
+
+```sh
+INSTALL_KLIPPER_EXTRAS=0 ./scripts/KlipperScreen-update.sh
+```
 
 ## Moonraker update manager
 
@@ -70,9 +84,15 @@ type: git_repo
 path: ~/klipper-screen-cnc
 origin: https://github.com/hudrucan/klipper-screen-cnc.git
 primary_branch: master
-managed_services: klipper-screen
+managed_services: klipper-screen-cnc
 install_script: scripts/KlipperScreen-update.sh
 ```
+
+Some Moonraker installs only allow configured service names. Use one of the
+service names shown in Moonraker's error message. The bundled update script
+copies Klipper CNC extras automatically when it can find the Klipper checkout,
+then restarts `klipper-screen-cnc.service` when that unit exists, otherwise it
+falls back to `klipper-screen.service`.
 
 Restart Moonraker after editing its config:
 

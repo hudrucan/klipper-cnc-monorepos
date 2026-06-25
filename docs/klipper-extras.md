@@ -34,6 +34,10 @@ On installations where Klipper lives elsewhere, copy them into that
 installation's `klippy/extras/` directory. Restart Klipper after adding or
 updating either file.
 
+`scripts/KlipperScreen-update.sh` also copies these modules automatically when
+it can find `~/klipper/klippy/extras/`. Set `KLIPPER_PATH=/path/to/klipper` for
+nonstandard Klipper locations, or `INSTALL_KLIPPER_EXTRAS=0` to opt out.
+
 ## Work Coordinate Systems
 
 Add:
