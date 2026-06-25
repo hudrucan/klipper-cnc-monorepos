@@ -9,7 +9,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from datetime import datetime
 
-from gi.repository import Gtk
+from gi.repository import GLib, Gtk
 
 from ks_includes.screen_panel import ScreenPanel
 
@@ -72,8 +72,8 @@ class Panel(ScreenPanel):
         ebox = Gtk.Box(hexpand=True, vexpand=False)
 
         entry = Gtk.Entry(hexpand=True, vexpand=False)
-        entry.connect("button-press-event", self._screen.show_keyboard)
-        entry.connect("touch-event", self._screen.show_keyboard)
+        entry.connect("button-release-event", self.show_keyboard_after_cursor)
+        entry.connect("touch-event", self.show_keyboard_after_cursor)
         entry.connect("activate", self._send_command)
         entry.set_placeholder_text("Enter one MDI command")
         entry.grab_focus_without_selecting()
@@ -201,6 +201,10 @@ class Panel(ScreenPanel):
         self.history_position = len(self.command_history)
         self.add_gcode("command", time.time(), cmd)
         self._screen._ws.api.gcode_script(cmd)
+
+    def show_keyboard_after_cursor(self, entry, event):
+        GLib.idle_add(self._screen.show_keyboard, entry, None)
+        return False
 
     def activate(self):
         self.clear()
