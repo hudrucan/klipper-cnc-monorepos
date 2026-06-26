@@ -3,6 +3,8 @@
 KlipperScreen displays thumbnails returned by Moonraker. CNC CAM output
 normally does not include one, so this repository provides an optional
 Moonraker file processor that renders a top-down preview after upload.
+The same Moonraker-side toolset can also write CNC metadata sidecars for
+clients that want richer file cards or CNC-specific previews.
 
 The renderer shows:
 
@@ -20,8 +22,9 @@ thumbnails on mixed-use Klipper installations.
 The adapted Fusion post processor writes a `Stock Box` table into the G-code.
 Other CAM output can still be rendered using its detected motion envelope.
 
-See [`tools/moonraker`](https://github.com/hudrucan/klipper-screen-cnc/tree/master/tools/moonraker)
-for installation and manual preview commands.
+See [`tools/moonraker`](../tools/moonraker/README.md) for installation,
+manual preview commands, metadata sidecars, `cnc_agent`, and machine-profile
+setup.
 
 The processor uses Moonraker's internal G-code processor API. Treat it as an
 optional host-side extension, back up vendor Moonraker installations first,
@@ -29,5 +32,6 @@ and test a newly uploaded file before relying on automatic processing.
 
 The approach was informed by the CNC metadata pipeline in
 [`isaaceliape/mainsail-cnc`](https://github.com/isaaceliape/mainsail-cnc).
-The implementation in this repository is independent and focuses only on
-standard Moonraker thumbnails.
+The implementation in this repository is independent. Thumbnail rendering stays
+focused on standard Moonraker thumbnails, while the adjacent metadata flow adds
+optional CNC sidecars without replacing the renderer.

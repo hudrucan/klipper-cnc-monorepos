@@ -111,6 +111,24 @@ Manual restart remains:
 sudo systemctl restart klipper-screen
 ```
 
+## Optional Moonraker CNC Integrations
+
+This repository also includes optional Moonraker-side CNC helpers in
+[`tools/moonraker`](../tools/moonraker/README.md):
+
+- `cnc_thumbnail.py` for top-down CNC toolpath thumbnails
+- `cnc_metadata.py` for `<file>.cnc-meta.json` sidecars
+- `cnc_agent.py` for a minimal `/server/cnc/*` compatibility API
+- `machine_profile.example.yaml` for profile/capability hints used by the
+  upstream E3CNC frontend
+
+The upstream frontend/reference project for that compatibility layer is
+[E3CNC](https://github.com/E3CNC/E3CNC).
+
+These are not required to run Klipper Screen CNC itself. Install them only if
+you want Moonraker-side CNC metadata processing or if you are experimenting
+with the vendored snapshot of the upstream E3CNC frontend.
+
 ## Verify
 
 ```sh

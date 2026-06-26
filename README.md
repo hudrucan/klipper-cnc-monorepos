@@ -15,6 +15,9 @@ This fork removes most 3D-printer-specific UI and replaces it with a compact CNC
 - CNC-oriented run status, progress, pause, resume, restart, and cancel
 - Optional `cnc-dark-red` theme for a darker CNC controller look
 - Limits, network, system, and shutdown controls
+- Optional Moonraker-side CNC metadata sidecars and toolpath thumbnails
+- Optional Moonraker-side `/server/cnc/*` compatibility API for the upstream
+  E3CNC frontend
 
 ## Status
 
@@ -82,8 +85,24 @@ Useful docs:
   WCS, XY stylus probing, surface measurement, and cutting-tool Z touch-off.
 - [`tools/fusion360`](tools/fusion360/README.md) includes the adapted Fusion 360
   post processor.
-- [`tools/moonraker`](tools/moonraker/README.md) includes the optional processor
-  for CNC toolpath thumbnails after upload.
+- [`tools/moonraker`](tools/moonraker/README.md) includes optional Moonraker-side
+  CNC integrations:
+  thumbnails, metadata sidecars, a minimal `cnc_agent`, and machine-profile
+  examples.
+
+## E3CNC Frontend Status
+
+This repository also vendors a debloated snapshot of the upstream E3CNC frontend under
+`vendor/e3cnc-debloated/frontend`.
+The upstream project is [E3CNC](https://github.com/E3CNC/E3CNC).
+
+Current status:
+
+- the frontend snapshot is kept as a reference/customization base
+- E3CNC update, rollback, and release-management UI dependencies were removed
+- Moonraker-side compatibility work in this repo currently targets:
+  metadata sidecars and `/server/cnc/*`
+- the frontend is not yet integrated as the primary shipped UI in this fork
 
 ## Sonic Pad Debian
 
