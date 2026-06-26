@@ -34,9 +34,21 @@ On installations where Klipper lives elsewhere, copy them into that
 installation's `klippy/extras/` directory. Restart Klipper after adding or
 updating either file.
 
-`scripts/KlipperScreen-update.sh` also copies these modules automatically when
-it can find `~/klipper/klippy/extras/`. Set `KLIPPER_PATH=/path/to/klipper` for
-nonstandard Klipper locations, or `INSTALL_KLIPPER_EXTRAS=0` to opt out.
+`scripts/KlipperScreen-update.sh` also tries to copy these modules automatically.
+It checks `~/klipper/klippy/extras/`, `~/Klipper/klippy/extras/`,
+`~/printer_data/klipper/klippy/extras/`, and common `/home/*/klipper` paths.
+
+For nonstandard installations, set one of these environment variables in the
+Moonraker update-manager environment:
+
+```sh
+KLIPPER_PATH=/path/to/klipper
+KLIPPER_EXTRAS_PATH=/path/to/klippy/extras
+```
+
+Set `INSTALL_KLIPPER_EXTRAS=0` to opt out. If the script cannot find the active
+Klipper extras directory, it logs the paths it tried and the modules must be
+copied manually.
 
 ## Work Coordinate Systems
 

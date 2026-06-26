@@ -91,7 +91,9 @@ Use `klipper-screen` as the update manager component name even though the checko
 directory is `~/klipper-screen-cnc`. Moonraker derives the systemd service from the
 component name, so this lets Mainsail/Fluidd restart the real
 `klipper-screen.service` after pulling updates. The bundled update script also
-copies Klipper CNC extras automatically when it can find the Klipper checkout.
+tries to copy Klipper CNC extras automatically when it can find the active Klipper
+checkout. Set `KLIPPER_PATH` or `KLIPPER_EXTRAS_PATH` if Klipper lives in a
+nonstandard location.
 
 If you previously used `[update_manager klipper-screen-cnc]`, remove that block
 before adding the one above. Otherwise Moonraker may keep trying to restart a

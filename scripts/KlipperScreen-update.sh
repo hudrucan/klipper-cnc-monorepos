@@ -6,6 +6,7 @@ SCRIPTPATH=$(dirname -- "$(readlink -f -- "$0")")
 KSPATH=$(dirname "$SCRIPTPATH")
 KSENV="${KLIPPERSCREEN_VENV:-${HOME}/.klipper-screen-env}"
 KLIPPER_PATH="${KLIPPER_PATH:-${HOME}/klipper}"
+KLIPPER_EXTRAS_PATH="${KLIPPER_EXTRAS_PATH:-}"
 INSTALL_KLIPPER_EXTRAS="${INSTALL_KLIPPER_EXTRAS:-1}"
 
 SERVICE="${KLIPPERSCREEN_SERVICE:-klipper-screen.service}"
@@ -55,14 +56,40 @@ install_klipper_extras()
     fi
 
     local extras_src="${KSPATH}/klipper-extras"
-    local extras_dst="${KLIPPER_PATH}/klippy/extras"
+    local extras_dst=""
     if [ ! -d "$extras_src" ]; then
         echo "Klipper CNC extras source not found at ${extras_src}"
         return
     fi
-    if [ ! -d "$extras_dst" ]; then
-        echo "Klipper source not found at ${KLIPPER_PATH}; skipping CNC extras"
-        echo "Set KLIPPER_PATH=/path/to/klipper to install them automatically"
+
+    if [ -n "$KLIPPER_EXTRAS_PATH" ]; then
+        extras_dst="$KLIPPER_EXTRAS_PATH"
+    elif [ -d "${KLIPPER_PATH}/klippy/extras" ]; then
+        extras_dst="${KLIPPER_PATH}/klippy/extras"
+    else
+        local candidate
+        for candidate in \
+            "${HOME}/klipper/klippy/extras" \
+            "${HOME}/Klipper/klippy/extras" \
+            "${HOME}/printer_data/klipper/klippy/extras" \
+            /home/*/klipper/klippy/extras \
+            /home/*/Klipper/klippy/extras
+        do
+            if [ -d "$candidate" ]; then
+                extras_dst="$candidate"
+                break
+            fi
+        done
+    fi
+
+    if [ -z "$extras_dst" ] || [ ! -d "$extras_dst" ]; then
+        echo "Klipper CNC extras were not installed: could not find klippy/extras"
+        echo "Set KLIPPER_PATH=/path/to/klipper or KLIPPER_EXTRAS_PATH=/path/to/klippy/extras"
+        echo "Tried:"
+        echo "  ${KLIPPER_PATH}/klippy/extras"
+        echo "  ${HOME}/klipper/klippy/extras"
+        echo "  ${HOME}/Klipper/klippy/extras"
+        echo "  ${HOME}/printer_data/klipper/klippy/extras"
         return
     fi
 
