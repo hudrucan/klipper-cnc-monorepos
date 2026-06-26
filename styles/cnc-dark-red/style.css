@@ -94,14 +94,24 @@ button.color3:active,
 button.color4:active,
 .button_active,
 button.active,
-.horizontal_togglebuttons_active {
+.horizontal_togglebuttons_active,
+button.color1.button_active,
+button.color2.button_active,
+button.color3.button_active,
+button.color4.button_active {
     background-color: @active-dark;
 }
 
 .button_active,
-.horizontal_togglebuttons_active {
+.horizontal_togglebuttons_active,
+button.color1.button_active,
+button.color2.button_active,
+button.color3.button_active,
+button.color4.button_active {
     border-color: @active;
     border-bottom-color: @active;
+    border-bottom-width: .22em;
+    box-shadow: inset 0 0 0 .06em alpha(#ff4b42, 0.35);
 }
 
 button.update {

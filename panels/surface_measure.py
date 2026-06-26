@@ -89,6 +89,7 @@ class SurfaceMap(Gtk.DrawingArea):
                 height,
                 left + plot_w / 2,
                 top + plot_h / 2,
+                result.get("pattern") == "CROSS_5",
             )
         return False
 
@@ -129,7 +130,7 @@ class SurfaceMap(Gtk.DrawingArea):
         )
         ctx.show_text(str(text))
 
-    def _point_label(self, ctx, x, y, name, value, color, label_size, width, height, center_x, center_y):
+    def _point_label(self, ctx, x, y, name, value, color, label_size, width, height, center_x, center_y, cross_mode=False):
         text = f"{name} {value}"
         padding_x = 11
         padding_y = 6
@@ -144,13 +145,17 @@ class SurfaceMap(Gtk.DrawingArea):
         horizontal_bias = x - center_x
         vertical_bias = y - center_y
 
-        if abs(horizontal_bias) > box_w / 2:
+        if cross_mode and name in {"REAR", "CENTER", "FRONT"}:
+            dy = {"REAR": -34, "CENTER": 0, "FRONT": 34}[name]
+        elif abs(horizontal_bias) > box_w / 2:
             dx = offset if horizontal_bias < 0 else -offset
-
-        if abs(vertical_bias) > box_h:
-            dy = offset if vertical_bias < 0 else -offset
-        elif abs(horizontal_bias) <= box_w / 2:
-            dy = -offset if vertical_bias >= 0 else offset
+            if abs(vertical_bias) > box_h:
+                dy = offset if vertical_bias < 0 else -offset
+        else:
+            if abs(vertical_bias) > box_h:
+                dy = offset if vertical_bias < 0 else -offset
+            else:
+                dy = -offset if vertical_bias >= 0 else offset
 
         box_x = min(max(x + dx - box_w / 2, 12), width - box_w - 12)
         box_y = min(max(y + dy - box_h / 2, 12), height - box_h - 12)

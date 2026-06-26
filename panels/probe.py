@@ -319,19 +319,19 @@ class Panel(ScreenPanel):
         )
 
     def _show_cnc_confirm(self, title, badge, message, name, script, callback):
-        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7)
-        content.set_size_request(min(int(self._screen.width * 0.70), 720), -1)
-        content.set_margin_start(12)
-        content.set_margin_end(12)
-        content.set_margin_top(10)
-        content.set_margin_bottom(10)
+        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        content.set_size_request(min(int(self._screen.width * 0.68), 680), -1)
+        content.set_margin_start(10)
+        content.set_margin_end(10)
+        content.set_margin_top(6)
+        content.set_margin_bottom(6)
         heading = Gtk.Label(label=f"<big><b>{title}</b></big>", xalign=0, use_markup=True)
         badge_label = Gtk.Label(label=badge, xalign=0)
         badge_label.get_style_context().add_class("cnc-confirm-badge")
         note = Gtk.Label(label=message, xalign=0, wrap=True)
         note.get_style_context().add_class("cnc-probe-detail")
         checklist = Gtk.Label(
-            label="✓ Spindle off\n✓ Probe path clear\n✓ XYZ homed",
+            label="✓ Spindle off · Probe path clear · XYZ homed",
             xalign=0,
         )
         checklist.get_style_context().add_class("cnc-confirm-checklist")
@@ -381,42 +381,42 @@ class Panel(ScreenPanel):
         if not specs:
             return None, {}
 
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         label = Gtk.Label(label="Required stock span", xalign=0)
         label.get_style_context().add_class("cnc-probe-detail")
-        grid = Gtk.Grid(column_homogeneous=False)
-        grid.set_column_spacing(10)
-        grid.set_row_spacing(8)
         entries = {}
+        box.pack_start(label, False, False, 0)
         for row, (key, placeholder) in enumerate(specs):
-            row_label = Gtk.Label(label=placeholder, xalign=0)
+            row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+            row_box.set_halign(Gtk.Align.START)
+            row_label = Gtk.Label(label=placeholder.replace("Stock ", ""), xalign=0)
             row_label.get_style_context().add_class("cnc-probe-detail")
+            row_label.set_size_request(70, -1)
             entry = Gtk.Entry(text="")
             entry.set_width_chars(5)
             entry.set_max_width_chars(6)
             entry.set_alignment(0.5)
             entry.set_input_purpose(Gtk.InputPurpose.NUMBER)
             entry.set_hexpand(False)
-            entry.set_size_request(88, 46)
+            entry.set_size_request(76, 32)
             entries[key] = entry
-            grid.attach(row_label, 0, row, 1, 1)
-            for col, step in enumerate((-10, -1)):
+            row_box.pack_start(row_label, False, False, 0)
+            for step in (-10, -1):
                 button = self._gtk.Button(label=f"+{step}")
                 if step < 0:
                     button.set_label(str(step))
                 button.get_style_context().add_class("buttons_slim")
-                button.set_size_request(48, 46)
+                button.set_size_request(46, 32)
                 button.connect("clicked", self._adjust_confirm_entry, entry, step)
-                grid.attach(button, col + 1, row, 1, 1)
-            grid.attach(entry, 3, row, 1, 1)
-            for col, step in enumerate((1, 10)):
+                row_box.pack_start(button, False, False, 0)
+            row_box.pack_start(entry, False, False, 0)
+            for step in (1, 10):
                 button = self._gtk.Button(label=f"+{step}")
                 button.get_style_context().add_class("buttons_slim")
-                button.set_size_request(48, 46)
+                button.set_size_request(46, 32)
                 button.connect("clicked", self._adjust_confirm_entry, entry, step)
-                grid.attach(button, col + 4, row, 1, 1)
-        box.pack_start(label, False, False, 0)
-        box.pack_start(grid, False, False, 0)
+                row_box.pack_start(button, False, False, 0)
+            box.pack_start(row_box, False, False, 0)
         return box, entries
 
     def _adjust_confirm_entry(self, widget, entry, step):
