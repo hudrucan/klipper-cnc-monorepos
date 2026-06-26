@@ -3,6 +3,7 @@
 The repository includes optional Klipper configuration examples:
 
 - [`cnc_pause_resume.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_pause_resume.cfg)
+- [`cnc_spindle.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_spindle.cfg)
 - [`cnc_start_end.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_start_end.cfg)
 - [`cnc_homing_override.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_homing_override.cfg)
 - [`cnc_touch_probe.cfg`](https://github.com/hudrucan/klipper-screen-cnc/blob/master/config/examples/cnc_touch_probe.cfg)
@@ -13,6 +14,7 @@ value, then include them from `printer.cfg`:
 
 ```ini
 [include cnc_pause_resume.cfg]
+[include cnc_spindle.cfg]
 [include cnc_start_end.cfg]
 [include cnc_homing_override.cfg]
 [include cnc_touch_probe.cfg]
@@ -52,6 +54,22 @@ for the machine.
 
 Do not include `mainsail.cfg` at the same time. Duplicate base sections and command
 overrides will prevent Klipper from loading.
+
+## Guarded Spindle
+
+`cnc_spindle.cfg` defines guarded `M3` and `M5` macros for machines where the
+touch probe has a wire or clip that must be removed before the spindle rotates.
+
+- `M3` first checks `[touch_probe]`.
+- If the probe is triggered, disconnected, or miswired so it reports triggered,
+  `M3` forces the spindle output off and aborts.
+- `M5` always turns the spindle output off.
+
+Place this guard in the Klipper macro layer, not only in KlipperScreen, so MDI,
+uploaded G-code, macros, and the Spindle panel all share the same safety check.
+The example treats `M3 S1000` as full output and clamps larger Fusion RPM values
+to full output. Adjust `variable_s_scale` if your spindle output uses a different
+PWM convention.
 
 ## Homing Override
 

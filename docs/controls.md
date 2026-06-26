@@ -17,6 +17,9 @@ The spindle panel appears when Klipper exposes `M3`, `M5`, and an
 `[output_pin spindle]` section. `M4` enables counter-clockwise control.
 
 Verify spindle direction and emergency-stop behavior before attaching a cutting tool.
+If the touch probe uses a wire or clip attached near the spindle, guard `M3` in
+Klipper itself. The example `config/examples/cnc_spindle.cfg` blocks spindle start
+when `[touch_probe]` reports triggered.
 
 ## Motion Override
 
