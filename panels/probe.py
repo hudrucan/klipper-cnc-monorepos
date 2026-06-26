@@ -381,17 +381,16 @@ class Panel(ScreenPanel):
         if not specs:
             return None, {}
 
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         label = Gtk.Label(label="Required stock span", xalign=0)
         label.get_style_context().add_class("cnc-probe-detail")
+        grid = Gtk.Grid(column_homogeneous=False)
+        grid.set_column_spacing(10)
+        grid.set_row_spacing(8)
         entries = {}
-        box.pack_start(label, False, False, 0)
         for row, (key, placeholder) in enumerate(specs):
-            row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-            row_box.set_halign(Gtk.Align.START)
-            row_label = Gtk.Label(label=placeholder.replace("Stock ", ""), xalign=0)
+            row_label = Gtk.Label(label=placeholder, xalign=0)
             row_label.get_style_context().add_class("cnc-probe-detail")
-            row_label.set_size_request(70, -1)
             entry = Gtk.Entry(text="")
             entry.set_width_chars(5)
             entry.set_max_width_chars(6)
@@ -400,23 +399,22 @@ class Panel(ScreenPanel):
             entry.set_hexpand(False)
             entry.set_size_request(76, 32)
             entries[key] = entry
-            row_box.pack_start(row_label, False, False, 0)
-            for step in (-10, -1):
-                button = self._gtk.Button(label=f"+{step}")
-                if step < 0:
-                    button.set_label(str(step))
+            grid.attach(row_label, 0, row, 1, 1)
+            for step in (-10, -5, -1):
+                button = self._gtk.Button(label=f"{step:+g}")
                 button.get_style_context().add_class("buttons_slim")
                 button.set_size_request(46, 32)
                 button.connect("clicked", self._adjust_confirm_entry, entry, step)
-                row_box.pack_start(button, False, False, 0)
-            row_box.pack_start(entry, False, False, 0)
-            for step in (1, 10):
-                button = self._gtk.Button(label=f"+{step}")
+                grid.attach(button, { -10: 1, -5: 2, -1: 3 }[step], row, 1, 1)
+            grid.attach(entry, 4, row, 1, 1)
+            for step in (1, 5, 10):
+                button = self._gtk.Button(label=f"{step:+g}")
                 button.get_style_context().add_class("buttons_slim")
                 button.set_size_request(46, 32)
                 button.connect("clicked", self._adjust_confirm_entry, entry, step)
-                row_box.pack_start(button, False, False, 0)
-            box.pack_start(row_box, False, False, 0)
+                grid.attach(button, {1: 5, 5: 6, 10: 7}[step], row, 1, 1)
+        box.pack_start(label, False, False, 0)
+        box.pack_start(grid, False, False, 0)
         return box, entries
 
     def _adjust_confirm_entry(self, widget, entry, step):
