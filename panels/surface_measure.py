@@ -44,12 +44,12 @@ class SurfaceMap(Gtk.DrawingArea):
 
         label_size = min(max(width * 0.014, 12), 15)
         marker_radius = min(max(width * 0.006, 5), 7)
-        frame_left = 18
-        frame_top = 12
+        frame_left = 22
+        frame_top = 14
         frame_w = width - frame_left * 2
         frame_h = height - frame_top * 2
-        label_pad_x = min(max(width * 0.075, 52), 78)
-        label_pad_y = min(max(height * 0.18, 28), 40)
+        label_pad_x = min(max(width * 0.09, 58), 86)
+        label_pad_y = min(max(height * 0.14, 24), 32)
         left = frame_left + label_pad_x
         top = frame_top + label_pad_y
         plot_w = max(frame_w - label_pad_x * 2, 1)
@@ -133,7 +133,7 @@ class SurfaceMap(Gtk.DrawingArea):
         text = f"{name} {value}"
         padding_x = 11
         padding_y = 6
-        offset = 18
+        offset = 20
         ctx.set_font_size(label_size)
         extents = ctx.text_extents(text)
         box_w = max(extents.width + padding_x * 2, 96)
@@ -141,10 +141,16 @@ class SurfaceMap(Gtk.DrawingArea):
 
         dx = 0
         dy = 0
-        if abs(x - center_x) > box_w / 3:
-            dx = offset if x < center_x else -offset
-        if abs(y - center_y) > box_h / 2:
-            dy = offset if y < center_y else -offset
+        horizontal_bias = x - center_x
+        vertical_bias = y - center_y
+
+        if abs(horizontal_bias) > box_w / 2:
+            dx = offset if horizontal_bias < 0 else -offset
+
+        if abs(vertical_bias) > box_h:
+            dy = offset if vertical_bias < 0 else -offset
+        elif abs(horizontal_bias) <= box_w / 2:
+            dy = -offset if vertical_bias >= 0 else offset
 
         box_x = min(max(x + dx - box_w / 2, 12), width - box_w - 12)
         box_y = min(max(y + dy - box_h / 2, 12), height - box_h - 12)
@@ -257,6 +263,9 @@ class Panel(ScreenPanel):
         for index, name in enumerate(names):
             entry = Gtk.Entry(placeholder_text=name.replace("_", " ").title())
             entry.set_input_purpose(Gtk.InputPurpose.NUMBER)
+            if name in {"WIDTH", "HEIGHT"}:
+                entry.set_width_chars(7)
+                entry.set_max_width_chars(8)
             entry.connect("touch-event", self.show_keyboard)
             entry.connect("button-press-event", self.show_keyboard)
             entry.connect("focus-out-event", self._screen.remove_keyboard)

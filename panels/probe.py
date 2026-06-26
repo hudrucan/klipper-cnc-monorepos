@@ -385,16 +385,19 @@ class Panel(ScreenPanel):
         label = Gtk.Label(label="Required stock span", xalign=0)
         label.get_style_context().add_class("cnc-probe-detail")
         grid = Gtk.Grid(column_homogeneous=False)
-        grid.set_column_spacing(6)
-        grid.set_row_spacing(4)
+        grid.set_column_spacing(10)
+        grid.set_row_spacing(8)
         entries = {}
         for row, (key, placeholder) in enumerate(specs):
             row_label = Gtk.Label(label=placeholder, xalign=0)
             row_label.get_style_context().add_class("cnc-probe-detail")
             entry = Gtk.Entry(text="")
-            entry.set_width_chars(6)
+            entry.set_width_chars(5)
+            entry.set_max_width_chars(6)
             entry.set_alignment(0.5)
             entry.set_input_purpose(Gtk.InputPurpose.NUMBER)
+            entry.set_hexpand(False)
+            entry.set_size_request(88, 46)
             entries[key] = entry
             grid.attach(row_label, 0, row, 1, 1)
             for col, step in enumerate((-10, -1)):
@@ -402,14 +405,14 @@ class Panel(ScreenPanel):
                 if step < 0:
                     button.set_label(str(step))
                 button.get_style_context().add_class("buttons_slim")
-                button.set_size_request(56, -1)
+                button.set_size_request(48, 46)
                 button.connect("clicked", self._adjust_confirm_entry, entry, step)
                 grid.attach(button, col + 1, row, 1, 1)
             grid.attach(entry, 3, row, 1, 1)
             for col, step in enumerate((1, 10)):
                 button = self._gtk.Button(label=f"+{step}")
                 button.get_style_context().add_class("buttons_slim")
-                button.set_size_request(56, -1)
+                button.set_size_request(48, 46)
                 button.connect("clicked", self._adjust_confirm_entry, entry, step)
                 grid.attach(button, col + 4, row, 1, 1)
         box.pack_start(label, False, False, 0)

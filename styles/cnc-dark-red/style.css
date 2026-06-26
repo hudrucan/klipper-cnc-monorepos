@@ -2,12 +2,12 @@
 @define-color text #edf2f2;
 @define-color text-inv #080a0b;
 @define-color bg #0c0f11;
-@define-color buttons-bg #101417;
+@define-color buttons-bg #0d1114;
 @define-color panel #13181c;
 @define-color card #171d21;
 @define-color card-2 #1c2429;
 @define-color active #d63b3b;
-@define-color active-dark #201213;
+@define-color active-dark #191011;
 @define-color lines #4e5a60;
 @define-color lines-soft alpha(#edf2f2, 0.10);
 
@@ -46,31 +46,31 @@ button.buttons_slim,
     background-color: @buttons-bg;
     border-style: solid;
     border-width: .08em;
-    border-color: @lines-soft;
-    border-radius: .1em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-radius: .16em;
 }
 
 button.color1 {
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-bottom-width: .16em;
     border-bottom-color: @color1;
 }
 
 button.color2 {
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-bottom-width: .16em;
     border-bottom-color: @color2;
 }
 
 button.color3 {
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-bottom-width: .16em;
     border-bottom-color: @color3;
 }
 
 button.color4 {
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-bottom-width: .16em;
     border-bottom-color: @color4;
 }
 
@@ -106,18 +106,18 @@ button.active,
 
 button.update {
     background-color: @buttons-bg;
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-bottom-width: .16em;
     border-bottom-color: @echo;
-    border-radius: .1em;
+    border-radius: .16em;
 }
 
 button.invalid {
     background-color: @buttons-bg;
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+    border-color: alpha(#edf2f2, 0.08);
+    border-bottom-width: .16em;
     border-bottom-color: @error;
-    border-radius: .1em;
+    border-radius: .16em;
 }
 
 menu,
