@@ -282,8 +282,8 @@ fix_fbturbo()
 add_desktop_file()
 {
     mkdir -p "$HOME"/.local/share/applications/
-    cp "$SCRIPTPATH"/KlipperScreen.desktop "$HOME"/.local/share/applications/KlipperScreen.desktop
-    sudo cp "$SCRIPTPATH"/../styles/icon.svg /usr/share/icons/hicolor/scalable/apps/KlipperScreen.svg
+    cp "$SCRIPTPATH"/KlipperScreen.desktop "$HOME"/.local/share/applications/klipper-screen.desktop
+    sudo cp "$SCRIPTPATH"/../styles/icon.svg /usr/share/icons/hicolor/scalable/apps/klipper-screen.svg
 }
 
 start_KlipperScreen()

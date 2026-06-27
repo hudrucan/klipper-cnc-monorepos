@@ -1,9 +1,9 @@
 /* Klipper Screen CNC dark theme with RepRap-inspired red accents. */
 @define-color text #edf2f2;
 @define-color text-inv #080a0b;
-@define-color bg #0c0f11;
+@define-color bg #121212;
 @define-color buttons-bg #0d1114;
-@define-color panel #13181c;
+@define-color panel #121212;
 @define-color card #171d21;
 @define-color card-2 #1c2429;
 @define-color active #d63b3b;
@@ -24,18 +24,18 @@
 @define-color switch-scale-bg #d63b3b;
 
 * {
-    color: @text;
+  color: @text;
 }
 
 junction,
 list row,
 treeview.view,
 window {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 button {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 button.color1,
@@ -44,35 +44,35 @@ button.color3,
 button.color4,
 button.buttons_slim,
 .dialog button {
-    background-color: @buttons-bg;
-    border-style: solid;
-    border-width: .08em;
-    border-color: alpha(#edf2f2, 0.08);
-    border-radius: .16em;
+  background-color: @buttons-bg;
+  /* border-style: solid;
+  border-width: 0.08em; */
+  border-color: alpha(#edf2f2, 0.08);
+  border-radius: 0.16em;
 }
 
 button.color1 {
-    border-color: alpha(#edf2f2, 0.08);
-    border-bottom-width: .16em;
-    border-bottom-color: @color1;
+  /* border-color: alpha(#edf2f2, 0.08); */
+  border-bottom-width: 0.16em;
+  border-bottom-color: @color1;
 }
 
 button.color2 {
-    border-color: alpha(#edf2f2, 0.08);
-    border-bottom-width: .16em;
-    border-bottom-color: @color2;
+  /* border-color: alpha(#edf2f2, 0.08); */
+  border-bottom-width: 0.16em;
+  border-bottom-color: @color2;
 }
 
 button.color3 {
-    border-color: alpha(#edf2f2, 0.08);
-    border-bottom-width: .16em;
-    border-bottom-color: @color3;
+  /* border-color: alpha(#edf2f2, 0.08); */
+  border-bottom-width: 0.16em;
+  border-bottom-color: @color3;
 }
 
 button.color4 {
-    border-color: alpha(#edf2f2, 0.08);
-    border-bottom-width: .16em;
-    border-bottom-color: @color4;
+  /* border-color: alpha(#edf2f2, 0.08); */
+  border-bottom-width: 0.16em;
+  border-bottom-color: @color4;
 }
 
 button:focus,
@@ -83,8 +83,8 @@ button.color4:focus,
 button.update:focus,
 button.invalid:focus,
 .dialog button:focus {
-    outline: .1em solid @active;
-    outline-offset: .08em;
+  outline: 0.1em solid @active;
+  outline-offset: 0.08em;
 }
 
 .active image,
@@ -100,7 +100,7 @@ button.color1.button_active,
 button.color2.button_active,
 button.color3.button_active,
 button.color4.button_active {
-    background-color: @selected-bg;
+  background-color: @selected-bg;
 }
 
 .button_active,
@@ -109,131 +109,131 @@ button.color1.button_active,
 button.color2.button_active,
 button.color3.button_active,
 button.color4.button_active {
-    border-color: @active;
-    border-bottom-color: @active;
-    border-width: .16em;
-    border-right-width: .16em;
-    border-bottom-width: .16em;
+  border-color: @active;
+  border-bottom-color: @active;
+  border-width: 0.16em;
+  border-right-width: 0.16em;
+  border-bottom-width: 0.16em;
 }
 
 button.update {
-    background-color: @buttons-bg;
-    border-color: alpha(#edf2f2, 0.08);
-    border-bottom-width: .16em;
-    border-bottom-color: @echo;
-    border-radius: .16em;
+  background-color: @buttons-bg;
+  border-color: alpha(#edf2f2, 0.08);
+  border-bottom-width: 0.16em;
+  border-bottom-color: @echo;
+  border-radius: 0.16em;
 }
 
 button.invalid {
-    background-color: @buttons-bg;
-    border-color: alpha(#edf2f2, 0.08);
-    border-bottom-width: .16em;
-    border-bottom-color: @error;
-    border-radius: .16em;
+  background-color: @buttons-bg;
+  border-color: alpha(#edf2f2, 0.08);
+  border-bottom-width: 0.16em;
+  border-bottom-color: @error;
+  border-radius: 0.16em;
 }
 
 menu,
 menuitem,
 combobox button,
 combobox menuitem {
-    background-color: @panel;
-    border-color: @bg;
+  background-color: @panel;
+  border-color: @bg;
 }
 
 treeview.view check,
 switch,
 entry,
 trough {
-    background-color: @panel;
+  background-color: @panel;
 }
 
 treeview.view check:checked,
 switch:checked,
 trough highlight,
 trough progress {
-    background-color: @slider;
+  background-color: @slider;
 }
 
 treeview.view check:checked {
-    -gtk-icon-source: url("./styles/cnc-dark-red/images/complete.svg");
+  -gtk-icon-source: url("./styles/cnc-dark-red/images/complete.svg");
 }
 
 entry {
-    border-color: @bg;
+  border-color: @bg;
 }
 
 label {
-    color: @text;
+  color: @text;
 }
 
 scrollbar,
 scrollbar button,
 scrollbar trough {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 scrollbar slider {
-    background-color: @card;
+  background-color: @card;
 }
 
 .title_bar,
 .action_bar {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 .horizontal_togglebuttons {
-    background-color: @buttons-bg;
-    border-color: @lines;
-    border-width: .08em;
-    border-right-width: 0;
-    min-height: 2.9em;
-    border-radius: 0;
+  background-color: @buttons-bg;
+  border-color: @lines;
+  border-width: 0.08em;
+  border-right-width: 0;
+  min-height: 2.9em;
+  border-radius: 0;
 }
 
 .horizontal_togglebuttons:first-child {
-    border-top-left-radius: .18em;
-    border-bottom-left-radius: .18em;
+  border-top-left-radius: 0.18em;
+  border-bottom-left-radius: 0.18em;
 }
 
 .horizontal_togglebuttons:last-child {
-    border-top-right-radius: .18em;
-    border-bottom-right-radius: .18em;
-    border-right-width: .08em;
+  border-top-right-radius: 0.18em;
+  border-bottom-right-radius: 0.18em;
+  border-right-width: 0.08em;
 }
 
 .dialog {
-    background-color: @bg;
-    border-color: @lines;
+  background-color: @bg;
+  border-color: @lines;
 }
 
 .dialog-info,
 .dialog-default,
 .dialog-primary {
-    border-bottom-color: @active;
+  border-bottom-color: @active;
 }
 
 .dialog-warning {
-    border-bottom-color: @warning;
+  border-bottom-color: @warning;
 }
 
 .dialog-error {
-    border-bottom-color: @error;
+  border-bottom-color: @error;
 }
 
 .message_popup_echo,
 .message_popup_echo button {
-    background-color: @echo;
+  background-color: @echo;
 }
 
 .message_popup_warning,
 .message_popup_warning button {
-    background-color: @warning;
-    color: @text-inv;
+  background-color: @warning;
+  color: @text-inv;
 }
 
 .message_popup_error,
 .message_popup_error button {
-    background-color: @error;
+  background-color: @error;
 }
 
 .frame-item,
@@ -245,142 +245,142 @@ scrollbar slider {
 .cnc-run-metric-card,
 .cnc-history-card,
 .cnc-dro-card {
-    background-color: @panel;
-    border-color: alpha(@text, 0.12);
-    border-width: .08em;
-    border-style: solid;
+  background-color: @panel;
+  border-color: alpha(@text, 0.12);
+  /* border-width: 0.08em; */
+  /* border-style: solid; */
 }
 
 .cnc-status,
 .cnc-confirm-script {
-    background-color: @panel;
-    border-color: alpha(@text, 0.12);
-    border-width: .08em;
-    border-style: solid;
+  background-color: @panel;
+  border-color: alpha(@text, 0.12);
+  /* border-width: 0.08em; */
+  /* border-style: solid; */
 }
 
 .cnc-confirm-badge {
-    background-color: @panel;
-    border-left-color: @active;
+  background-color: @panel;
+  border-left-color: @active;
 }
 
 entry.cnc-confirm-entry {
-    background-color: @buttons-bg;
-    border-color: alpha(#edf2f2, 0.08);
-    border-style: solid;
-    border-width: .08em;
-    border-radius: .16em;
-    margin: 0;
-    padding: 0;
+  background-color: @buttons-bg;
+  border-color: alpha(#edf2f2, 0.08);
+  /* border-style: solid; */
+  /* border-width: 0.08em; */
+  border-radius: 0.16em;
+  margin: 0;
+  padding: 0;
 }
 
 .cnc-spindle-running,
 .cnc-run-metric-value,
 .cnc-run-progress-text,
 .cnc-history-result {
-    color: @active;
+  color: @active;
 }
 
 .cnc-history-highlight {
-    color: @warning;
+  color: @warning;
 }
 
 .cnc-history-accent-surface,
 .cnc-history-accent-touch,
 .cnc-history-accent-setter {
-    background-color: @active;
+  background-color: @active;
 }
 
 .cnc-dro-card-x,
 .cnc-run-position-card.cnc-dro-card-x {
-    border-bottom-color: @color1;
+  border-bottom-color: @color1;
 }
 
 .cnc-dro-card-y,
 .cnc-run-position-card.cnc-dro-card-y {
-    border-bottom-color: @color2;
+  border-bottom-color: @color2;
 }
 
 .cnc-dro-card-z,
 .cnc-run-position-card.cnc-dro-card-z {
-    border-bottom-color: @color3;
+  border-bottom-color: @color3;
 }
 
 .cnc-wcs-card,
 .cnc-wcs-button {
-    background-color: @panel;
-    border-color: alpha(@text, 0.12);
-    border-style: solid;
-    border-width: .08em;
+  background-color: @panel;
+  border-color: alpha(@text, 0.12);
+  /* border-style: solid;
+  border-width: 0.08em; */
 }
 
 .cnc-wcs-active {
-    background-color: @selected-bg;
-    border-color: @active;
-    border-width: .16em;
+  background-color: @selected-bg;
+  border-color: @active;
+  border-width: 0.16em;
 }
 
 .cnc-jog-button,
 .cnc-jog-center {
-    background-color: @buttons-bg;
-    border-color: @lines-soft;
-    border-style: solid;
-    border-width: .08em;
-    border-radius: .1em;
+  background-color: @buttons-bg;
+  border-color: @lines-soft;
+  /* border-style: solid; */
+  /* border-width: .08em; */
+  border-radius: 0.1em;
 }
 
 .cnc-jog-pad,
 .cnc-jog-actions {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 .cnc-jog-button:active,
 .cnc-jog-center:active,
 .cnc-jog-button.button_active,
 .cnc-jog-center.button_active {
-    border-color: @active;
-    background-color: @selected-bg;
-    border-width: .16em;
+  border-color: @active;
+  background-color: @selected-bg;
+  border-width: 0.16em;
 }
 
 .buttons_slim.button_active,
 button.buttons_slim.button_active,
 .cnc-wcs-button.button_active,
 button.cnc-wcs-button.button_active {
-    border-color: @active;
-    background-color: @selected-bg;
-    border-width: .16em;
-    border-bottom-width: .16em;
+  border-color: @active;
+  background-color: @selected-bg;
+  border-width: 0.16em;
+  border-bottom-width: 0.16em;
 }
 
 button.horizontal_togglebuttons_active,
 .horizontal_togglebuttons_active {
-    background-color: @selected-bg;
-    border-color: @active;
-    border-width: .16em;
-    border-right-width: .16em;
+  background-color: @selected-bg;
+  border-color: @active;
+  border-width: 0.16em;
+  border-right-width: 0.16em;
 }
 
 .cnc-file-start,
 .cnc-probe-action,
 .cnc-wcs-button {
-    border-radius: .1em;
+  border-radius: 0.1em;
 }
 
 .cnc-probe-action {
-    background-color: @buttons-bg;
-    border-color: @lines-soft;
-    border-style: solid;
-    border-width: .08em;
+  background-color: @buttons-bg;
+  border-color: @lines-soft;
+  /* border-style: solid; */
+  /* border-width: .08em; */
 }
 
 .cnc-file-start {
-    border-color: @lines-soft;
-    border-bottom-width: .22em;
+  border-color: @lines-soft;
+  border-bottom-width: 0.22em;
 }
 
 .dialog button {
-    border-radius: .12em;
+  border-radius: 0.12em;
 }
 
 .dialog-primary,
@@ -388,31 +388,31 @@ button.horizontal_togglebuttons_active,
 .dialog-secondary,
 .dialog-error,
 .dialog-warning {
-    border-style: solid;
-    border-width: .08em;
-    border-color: @lines-soft;
+  /* border-style: solid; */
+  /* border-width: .08em; */
+  border-color: @lines-soft;
 }
 
 .dialog-primary,
 .dialog-info {
-    border-bottom-width: .22em;
+  border-bottom-width: 0.22em;
 }
 
 .dialog-secondary {
-    border-bottom-width: .22em;
-    border-bottom-color: @color3;
+  border-bottom-width: 0.22em;
+  border-bottom-color: @color3;
 }
 
 .dialog-error {
-    border-bottom-width: .22em;
+  border-bottom-width: 0.22em;
 }
 
 .dialog-warning {
-    border-bottom-width: .22em;
+  border-bottom-width: 0.22em;
 }
 
 .numpad_key,
 .keyboard_pad {
-    background-color: @buttons-bg;
-    border-color: @lines-soft;
+  background-color: @buttons-bg;
+  border-color: @lines-soft;
 }

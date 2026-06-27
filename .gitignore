@@ -12,3 +12,4 @@ venv/
 docs/extra
 .claude/auto-context.md
 node_modules
+*.dev.conf
