@@ -50,7 +50,7 @@
                 :icon="displaySmAndDown"
                 variant="text"
                 color="primary"
-                class="button-min-width-auto px-3 d-none d-sm-flex upload-and-start-button"
+                class="button-min-width-auto px-3 d-none d-sm-flex"
                 :loading="loadings.includes('btnUploadAndStart')"
                 @click="btnUploadAndStart">
                 <v-icon class="mr-md-2 upload-and-start-icon">{{ mdiFileUpload }}</v-icon>
@@ -417,11 +417,7 @@ function emergencyStop() {
     margin-top: 2px
 }
 
-.upload-and-start-button {
-    margin-top: 2px
-}
-
-.upload-and-start-button .upload-and-start-icon {
+.upload-and-start-icon {
     margin-bottom: 2px
 }
 </style>
