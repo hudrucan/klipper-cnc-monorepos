@@ -53,7 +53,7 @@
                 class="button-min-width-auto px-3 d-none d-sm-flex upload-and-start-button"
                 :loading="loadings.includes('btnUploadAndStart')"
                 @click="btnUploadAndStart">
-                <v-icon class="mr-md-2">{{ mdiFileUpload }}</v-icon>
+                <v-icon class="mr-md-2 upload-and-start-icon">{{ mdiFileUpload }}</v-icon>
                 <span class="d-none d-md-inline">{{ $t('App.TopBar.UploadPrint') }}</span>
             </v-btn>
             <v-btn
@@ -419,5 +419,9 @@ function emergencyStop() {
 
 .upload-and-start-button {
     margin-top: 2px
+}
+
+.upload-and-start-button .upload-and-start-icon {
+    margin-bottom: 2px
 }
 </style>
