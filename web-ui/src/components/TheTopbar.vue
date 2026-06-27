@@ -414,6 +414,10 @@ function emergencyStop() {
 }
 
 .emergency-button {
-    margin-top: 4px
+    margin-top: 2px
+}
+
+.upload-and-start-button {
+    margin-top: 2px
 }
 </style>
