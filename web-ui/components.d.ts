@@ -240,7 +240,6 @@ declare module '@vue/runtime-core' {
     VItemGroup: typeof import('vuetify/components')['VItemGroup']
     VList: typeof import('vuetify/components')['VList']
     VListItem: typeof import('vuetify/components')['VListItem']
-    VListItemAction: typeof import('vuetify/components')['VListItemAction']
     VListItemTitle: typeof import('vuetify/components')['VListItemTitle']
     VListSubheader: typeof import('vuetify/components')['VListSubheader']
     VMain: typeof import('vuetify/components')['VMain']

@@ -10,7 +10,7 @@
         transition="slide-y-transition"
         :min-width="isMobile ? '100%' : null">
         <template #activator="{ props }">
-            <v-btn :icon="boolMenu ? mdiBell : mdiBellOutline" rounded="0" class="minwidth-0" v-bind="props">
+            <v-btn :icon="boolMenu ? mdiBell : mdiBellOutline" rounded="0" class="minwidth-0 notification-button" v-bind="props">
                 <v-badge
                     :content="notifications.length <= 9 ? notifications.length : '9+'"
                     :value="notifications.length > 0"
@@ -93,5 +93,9 @@ async function dismissAll() {
 <style scoped>
 .announcement-menu__scrollbar {
     max-height: 500px;
+}
+
+.notification-button {
+    margin-bottom: 2px
 }
 </style>

@@ -155,7 +155,7 @@
                     </div>
                     <div
                         v-if="hostStats.memUsage !== null"
-                        class="system-load-gauge d-flex flex-column align-center justify-center">
+                        class="system-load-gauge d-flex flex-column align-center justify-center mt-5">
                         <v-progress-circular
                             :rotate="-90"
                             :size="55"
@@ -382,7 +382,6 @@ const cpuName = computed(() => {
 
 .system-load-gauges {
     align-items: center;
-    display: inline-flex;
     gap: 10px;
     justify-content: flex-end;
     width: fit-content;
@@ -395,10 +394,6 @@ const cpuName = computed(() => {
 @media (max-width: 960px) {
     .system-load-row {
         flex-wrap: wrap;
-    }
-
-    .system-load-row__gauges {
-        width: 100%;
     }
 
     .system-load-gauges {

@@ -397,4 +397,8 @@ onMounted((): void => {
     /*noinspection CssUnresolvedCustomProperty*/
     color: var(--v-btn-text-primary);
 }
+
+#page-container {
+    max-width: 100%
+}
 </style>

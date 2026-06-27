@@ -223,11 +223,4 @@ function formatSigned(value: number) {
     opacity: 0.7;
     font-variant-numeric: tabular-nums;
 }
-
-@media (max-width: 580px) {
-    .dro-panel__axis-grid {
-        grid-template-columns: 1fr;
-        gap: 0.65rem;
-    }
-}
 </style>

@@ -292,9 +292,9 @@
                                 </v-icon>
                                 <v-btn
                                     icon
-                                    variant="tonal"
+                                    variant="icon"
                                     color="primary"
-                                    size="x-small"
+                                    size="small"
                                     density="compact"
                                     class="offset-preview-legend__card-edit"
                                     :aria-label="`Edit stock size for ${entry.name}`"
@@ -1151,10 +1151,10 @@ onMounted(() => {
 .offset-preview-layout {
     display: grid;
     gap: 16px;
+    justify-items: center;
 }
 
 .offset-preview-layout__preview {
-    width: 100%;
     max-width: 320px;
     cursor: none;
 }
@@ -1181,7 +1181,7 @@ onMounted(() => {
 
     .offset-preview-layout__preview {
         position: sticky;
-        top: 12px;
+        top: 24px;
     }
 }
 
@@ -1382,7 +1382,7 @@ onMounted(() => {
 
 .offset-preview-legend__card-header {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     align-items: center;
     gap: 4px 6px;
 }

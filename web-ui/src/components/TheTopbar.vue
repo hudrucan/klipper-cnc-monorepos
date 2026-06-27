@@ -24,7 +24,7 @@
                 <span class="topbar-dro__sep">|</span>
                 <span class="topbar-dro__mode">{{ coordinateModeLabel }}</span>
             </div>
-            <v-spacer />
+            <v-spacer class="d-none d-md-inline" />
             <input
                 ref="fileUploadAndStart"
                 type="file"
@@ -339,10 +339,6 @@ function emergencyStop() {
     text-overflow: unset;
 }
 
-:deep(.topbar) .v-toolbar-title__placeholder {
-    text-overflow: unset;
-}
-
 :deep(.topbar) .v-app-bar-nav-icon {
     margin-left: 8px;
 }
@@ -354,6 +350,10 @@ function emergencyStop() {
     font-size: 0.8rem;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+
+    @media (max-width: 768px) {
+        display: none
+    }
 }
 
 .topbar-dro__axis {
@@ -411,5 +411,9 @@ function emergencyStop() {
     header.topbar {
         z-index: 8 !important;
     }
+}
+
+.emergency-button {
+    margin-top: 4px
 }
 </style>

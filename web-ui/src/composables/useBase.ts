@@ -71,7 +71,7 @@ export function useBase() {
 
     const isDesktop = computed(() => display.lgAndUp.value && !isWidescreen.value)
 
-    const isWidescreen = computed(() => display.xl.value)
+    const isWidescreen = computed(() => display.xlAndUp.value)
 
     const viewport = computed(() => {
         if (isMobile.value) return 'mobile'
