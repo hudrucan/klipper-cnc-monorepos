@@ -4,7 +4,7 @@
 @define-color bg #121212;
 @define-color buttons-bg #121212;
 @define-color panel #121212;
-@define-color card #171d21;
+@define-color card #121212;
 @define-color card-2 #1c2429;
 @define-color active #d63b3b;
 @define-color active-dark #191011;
@@ -173,7 +173,7 @@ scrollbar trough {
 }
 
 scrollbar slider {
-  background-color: @card;
+  background-color: @active-dark;
 }
 
 .title_bar,

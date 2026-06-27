@@ -13,72 +13,72 @@
 @define-color switch-scale-bg #3584e4;
 
 * {
-    color: @text;
-    font-size: KS_FONT_SIZEpx;
-    -GtkComboBox-appears-as-list: 0;
-    text-shadow: none;
-    box-shadow: none;
-    border: 0;
+  color: @text;
+  font-size: KS_FONT_SIZEpx;
+  -gtkcombobox-appears-as-list: 0;
+  text-shadow: none;
+  box-shadow: none;
+  border: 0;
 }
 
 button:disabled {
-    opacity: .5;
+  opacity: 0.5;
 }
 
 list row,
 treeview.view,
 window {
-    background-color: @bg;
-    -gtk-icon-shadow: none;
+  background-color: @bg;
+  -gtk-icon-shadow: none;
 }
 
-treeview.view{
-    padding: 1em .25em;
+treeview.view {
+  padding: 1em 0.25em;
 }
 
 junction {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 switch slider {
-    border: 0;
+  border: 0;
 }
 
 switch {
-    margin: 0.75em;
-    min-width: 5em;
-    min-height: 2.5em;
-    border: 0;
-    border-radius: 3em;
+  margin: 0.75em;
+  min-width: 5em;
+  min-height: 2.5em;
+  border: 0;
+  border-radius: 3em;
 }
 
 treeview.view check {
-    min-height: 2em;
-    min-width: 2em;
-    background-image: none;
+  min-height: 2em;
+  min-width: 2em;
+  background-image: none;
 }
 
 treeview.view check:checked {
-    background-image: none;
-    -gtk-icon-source: url("./styles/complete.svg");
+  background-image: none;
+  -gtk-icon-source: url("./styles/complete.svg");
 }
 
 button {
-    background-image: none;
-    background-color: @bg;
-    margin: .2em;
-    padding: 0.25em;
-    border-radius: 0;
-    border: 0;
-    -gtk-icon-shadow: none;
-    transition: padding 0s;
+  background-image: none;
+  background-color: @bg;
+  margin: 0.2em;
+  padding: 0.25em;
+  border-radius: 0;
+  border: 0;
+  -gtk-icon-shadow: none;
+  transition: padding 0s;
 }
 
 .active image,
 button:active,
 .button_active,
 button.active {
-    background-color: @active;
+  background-color: @active;
 }
 
 button:disabled,
@@ -86,7 +86,7 @@ button.color1:disabled,
 button.color2:disabled,
 button.color3:disabled,
 button.color4:disabled {
-    border: 0;
+  border: 0;
 }
 
 button:disabled label,
@@ -94,838 +94,835 @@ button.color1:disabled label,
 button.color2:disabled label,
 button.color3:disabled label,
 button.color4:disabled label {
-    color: grey;
+  color: grey;
 }
 
 button.color1,
 button.color2,
 button.color3,
 button.color4 {
-    padding: 0.33em;
-    padding-bottom: 0.1em;
+  padding: 0.33em;
+  padding-bottom: 0.1em;
 }
 
 button.color1 {
-    border-bottom: .4em solid @color1;
+  border-bottom: 0.4em solid @color1;
 }
 
 button.color2 {
-    border-bottom: .4em solid @color2;
+  border-bottom: 0.4em solid @color2;
 }
 
 button.color3 {
-    border-bottom: .4em solid @color3;
+  border-bottom: 0.4em solid @color3;
 }
 
 button.color4 {
-    border-bottom: .4em solid @color4;
+  border-bottom: 0.4em solid @color4;
 }
 
 button.status {
-    background-color: @bg;
+  background-color: @bg;
 }
 
 button.file-list {
-    margin: 0;
+  margin: 0;
 }
 
 button.update {
-    background: @color3;
-    border: .4em solid @color3;
-    border-radius: 0.4em;
-    font-weight: bold;
+  background: @color3;
+  border: 0.4em solid @color3;
+  border-radius: 0.4em;
+  font-weight: bold;
 }
 
 button.invalid {
-    background: @error;
-    border: .4em solid @error;
-    border-radius: 0.4em;
-    font-weight: bold;
+  background: @error;
+  border: 0.4em solid @error;
+  border-radius: 0.4em;
+  font-weight: bold;
 }
 
 combobox button {
-    border: .05em solid @bg;
-    padding: 0 0.7em;
-    border-radius: 0.7em;
+  border: 0.05em solid @bg;
+  padding: 0 0.7em;
+  border-radius: 0.7em;
 }
 
 combobox arrow {
-    min-width: 1em;
+  min-width: 1em;
 }
 
 combobox arrow:disabled {
--gtk-icon-source: None;
+  -gtk-icon-source: None;
 }
 
 combobox window.popup arrow {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 cellview {
-    padding: 0.2em 0.25em 0.2em 0.1em;
-    font-size: 0.91em;
+  padding: 0.2em 0.25em 0.2em 0.1em;
+  font-size: 0.91em;
 }
 
 entry {
-    font-size: 1em;
-    background-color: @active;
-    border: .2em solid @bg;
-    padding: .2em;
-    margin-right: .5em;
+  font-size: 1em;
+  background-color: @active;
+  border: 0.2em solid @bg;
+  padding: 0.2em;
+  margin-right: 0.5em;
 }
 
 entry image {
-    margin: 0 .1em;
-    border-radius: 1em;
-    padding: .5em;
+  margin: 0 0.1em;
+  border-radius: 1em;
+  padding: 0.5em;
 }
 
 label {
-    color: @text;
+  color: @text;
 }
 
 menu {
-    background-color: @bg;
-    border: .1em solid @lines;
+  background-color: @bg;
+  border: 0.1em solid @lines;
 }
 
 menuitem {
-    background-color: @bg;
-    border: .1em solid @lines;
-    border-bottom: 0;
-    border-top: 0;
+  background-color: @bg;
+  border: 0.1em solid @lines;
+  border-bottom: 0;
+  border-top: 0;
 }
 
 trough {
-    min-height: 2em;
-    background-color: @active;
-    color: @text;
-    border: 1px solid @text-inv;
+  min-height: 2em;
+  background-color: @active;
+  color: @text;
+  border: 1px solid @text-inv;
 }
 
 trough highlight,
 trough progress {
-    min-height: 2em;
-    background-color: @switch-scale-bg;
-    color: @text;
-    border: 1px solid @text-inv;
+  min-height: 2em;
+  background-color: @switch-scale-bg;
+  color: @text;
+  border: 1px solid @text-inv;
 }
 
 trough progress.left {
-    border: 0px;
+  border: 0px;
 }
 
 scale {
-    margin-bottom: 0;
-    margin-top: 0;
-    padding-bottom: 0;
-    padding-top: 0;
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-bottom: 0;
+  padding-top: 0;
 }
 
 scale mark {
-    color: @text;
+  color: @text;
 }
 
 scale trough slider {
-    min-height: 2em;
-    min-width: 2em;
+  min-height: 2em;
+  min-width: 2em;
 }
 
 scrollbar,
 scrollbar button,
 scrollbar trough {
-    border: none;
-    background-color: @bg;
-    min-height: 1em;
+  border: none;
+  background-color: @bg;
+  min-height: 0.25em;
 }
 
 scrollbar slider {
-    min-width: 2.5em;
-    border-radius: .7em;
-    background-color: @active;
+  min-width: 0.7em;
+  border-radius: 0.7em;
+  background-color: @active;
 }
 
 .gcode-list-scroll scrollbar.vertical,
 .gcode-list-scroll scrollbar.vertical trough {
-    min-width: 0.7em;
-    margin: 0;
-    padding: 0;
+  min-width: 0.7em;
+  margin: 0;
+  padding: 0;
 }
 
 .gcode-list-scroll scrollbar.vertical slider {
-    min-width: 0.7em;
-    margin: 0;
+  min-width: 0.7em;
+  margin: 0;
 }
 
 scrollbar.vertical.with-steppers {
-    -GtkScrollbar-has-backward-stepper: true;
-    -GtkScrollbar-has-forward-stepper: true;
+  -gtkscrollbar-has-backward-stepper: true;
+  -gtkscrollbar-has-forward-stepper: true;
 }
 
 scrollbar.vertical.with-steppers button.down {
-    -gtk-icon-source: -gtk-icontheme("pan-down-symbolic");
+  -gtk-icon-source: -gtk-icontheme("pan-down-symbolic");
 }
 
 scrollbar.vertical.with-steppers button.up {
-    -gtk-icon-source: -gtk-icontheme("pan-up-symbolic");
+  -gtk-icon-source: -gtk-icontheme("pan-up-symbolic");
 }
 
 undershoot.top,
 undershoot.bottom {
-    background-image: none;
+  background-image: none;
 }
 
 spinner {
-    animation-timing-function: steps(10);
+  animation-timing-function: steps(10);
 }
 
 separator {
-    margin: 1em 2em;
-    background-color: rgba(255, 255, 255, 0.5);
+  margin: 1em 2em;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 textview,
 textview text {
-    background: transparent;
-    font-family: Free Mono;
+  background: transparent;
+  font-family: Free Mono;
 }
 
 textview .time {
-    color: @lines;
+  color: @lines;
 }
 
 trough {
-    margin: .5em .5em;
+  margin: 0.5em 0.5em;
 }
 
-.action_bar :disabled{
-    opacity: .6;
+.action_bar :disabled {
+  opacity: 0.6;
 }
 
 .title_bar {
-    min-height: 2em;
+  min-height: 2em;
 }
 
 .spoolman_low {
-    color: @warning;
+  color: @warning;
 }
 
 .content {
-    margin: 0 .1em;
+  margin: 0 0.1em;
 }
 
 .prompt {
-    padding: 0.25em 2.5em;
+  padding: 0.25em 2.5em;
 }
 
 .dialog {
-    border: .1em solid @text-inv;
-    padding: 0.25em 2.5em;
-    background-color: @text-inv;
-    margin: 1em;
+  border: 0.1em solid @text-inv;
+  padding: 0.25em 2.5em;
+  background-color: @text-inv;
+  margin: 1em;
 }
 
 .dialog button {
-    padding: 1.5em 0.2em;
-    margin-top: 1em;
+  padding: 1.5em 0.2em;
+  margin-top: 1em;
 }
 
 .horizontal_togglebuttons_active {
-    background-color: @active;
-    font-weight: 600;
+  background-color: @active;
+  font-weight: 600;
 }
 
 .horizontal_togglebuttons {
-    border-style: solid;
-    border-color: @lines;
-    border-width: .15em;
-    border-right-width: 0;
-    margin: 0;
-    min-height: 2.9em;
+  border-style: solid;
+  border-color: @lines;
+  border-width: 0.15em;
+  border-right-width: 0;
+  margin: 0;
+  min-height: 2.9em;
 }
 
 .horizontal_togglebuttons_smaller {
-    min-height: 0;
+  min-height: 0;
 }
 
 .horizontal_togglebuttons:first-child {
-    border-top-left-radius: .75em;
-    border-bottom-left-radius: .75em;
-    margin-left: .25em;
+  border-top-left-radius: 0.75em;
+  border-bottom-left-radius: 0.75em;
+  margin-left: 0.25em;
 }
 
 .horizontal_togglebuttons:last-child {
-    border-top-right-radius: .75em;
-    border-bottom-right-radius: .75em;
-    border-right-width: .15em;
-    margin-right: .25em;
+  border-top-right-radius: 0.75em;
+  border-bottom-right-radius: 0.75em;
+  border-right-width: 0.15em;
+  margin-right: 0.25em;
 }
 
 .fan_slider {
-    margin: 0 1em 0 1em;
-    color: @text;
+  margin: 0 1em 0 1em;
+  color: @text;
 }
 
 .frame-item {
-    min-height: 4.5em;
-    padding: .2em .3em;
-    border-bottom: 1px solid rgba(255,255,255,0.05)
+  min-height: 4.5em;
+  padding: 0.2em 0.3em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .heatergraph {
-    min-height: 350px;
+  min-height: 350px;
 }
 
-.heater-list scrollbar slider{
-    min-width: 1.5em;
+.heater-list scrollbar slider {
+  min-width: 0.7em;
 }
 
 .heater-grid {
-    margin-right: .1em;
+  margin-right: 0.1em;
 }
 
 .heater-grid label {
-    min-height: 0em;
-    padding: 0;
-    margin: 0;
+  min-height: 0em;
+  padding: 0;
+  margin: 0;
 }
 
-.heater-grid button{
-    margin: .2em;
-    min-height: 2.9em;
-    padding: 0 .5em;
+.heater-grid button {
+  margin: 0.2em;
+  min-height: 2.9em;
+  padding: 0 0.5em;
 }
 
 .keyboard_matchbox {
-    margin-top: 42px;
+  margin-top: 42px;
 }
 
 .keyboard_pad {
-    margin: 0.05em;
-    padding: 0.0em;
-    border-radius: 0.7em;
+  margin: 0.05em;
+  padding: 0em;
+  border-radius: 0.7em;
 }
 
 .message_popup_popover {
-    border: 0;
-    background-color: Transparent;
-    padding: 0;
+  border: 0;
+  background-color: Transparent;
+  padding: 0;
 }
 
 .message_popup {
-    border: .1em solid @lines;
-    border-radius: 1em;
-    padding: 1em;
-    margin: 0;
+  border: 0.1em solid @lines;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 0;
 }
 
-.message_popup button{
-    padding: 1em;
+.message_popup button {
+  padding: 1em;
 }
 
 .message_popup_echo,
 .message_popup_echo button {
-    background-color: @echo;
+  background-color: @echo;
 }
 
 .message_popup_warning,
 .message_popup_warning button {
-    background-color: @warning;
+  background-color: @warning;
 }
 
 .message_popup_error,
 .message_popup_error button {
-    background-color: @error;
+  background-color: @error;
 }
 
 .numpad_key {
-    border: .15em;
-    border-style: solid;
-    border-color: @lines;
+  border: 0.15em;
+  border-style: solid;
+  border-color: @lines;
 }
 
 .numpad_tleft {
-    border-bottom: 0;
-    border-right: 0;
-    border-top-left-radius: .7em;
-    margin: .15em 0 0 .15em;
+  border-bottom: 0;
+  border-right: 0;
+  border-top-left-radius: 0.7em;
+  margin: 0.15em 0 0 0.15em;
 }
 
 .numpad_top {
-    border-bottom: 0;
-    border-right: 0;
-    margin: .15em 0 0 0;
+  border-bottom: 0;
+  border-right: 0;
+  margin: 0.15em 0 0 0;
 }
 
 .numpad_tright {
-    border-bottom: 0;
-    border-top-right-radius: .7em;
-    margin: .15em .15em 0 0;
+  border-bottom: 0;
+  border-top-right-radius: 0.7em;
+  margin: 0.15em 0.15em 0 0;
 }
 
 .numpad_left {
-    border-right: 0;
-    border-bottom: 0;
-    margin: 0 0 0 .15em;
+  border-right: 0;
+  border-bottom: 0;
+  margin: 0 0 0 0.15em;
 }
 
 .numpad_button {
-    border-right: 0;
-    border-bottom: 0;
-    margin: 0;
+  border-right: 0;
+  border-bottom: 0;
+  margin: 0;
 }
 
 .numpad_right {
-    border-bottom: 0;
-    margin: 0 .15em 0 0;
+  border-bottom: 0;
+  margin: 0 0.15em 0 0;
 }
 
 .numpad_bleft {
-    border-right: 0;
-    border-bottom-left-radius: .7em;
-    margin: 0 0 .15em .15em;
+  border-right: 0;
+  border-bottom-left-radius: 0.7em;
+  margin: 0 0 0.15em 0.15em;
 }
 
 .numpad_bottom {
-    border-right: 0;
-    margin: 0 0 .15em 0;
+  border-right: 0;
+  margin: 0 0 0.15em 0;
 }
 
 .numpad_bright {
-    border-bottom-right-radius: .7em;
-    margin: 0 .15em .15em 0;
+  border-bottom-right-radius: 0.7em;
+  margin: 0 0.15em 0.15em 0;
 }
 
 .printing-filename {
-    font-size: 1.4em;
-    font-weight: bold;
-    margin-right: .25em;
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-right: 0.25em;
 }
 
 .printing-info {
-    margin-right: .25em;
+  margin-right: 0.25em;
 }
 .printing-info button {
-    margin: 0 .1em;
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: .5em;
+  margin: 0 0.1em;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 0.5em;
 }
 
 .printing-info-secondary label {
-    margin-left: .75em;
+  margin-left: 0.75em;
 }
 
 .printing-status {
-    font-style: italic;
-    margin-right: .25em;
-    font-weight: bold;
+  font-style: italic;
+  margin-right: 0.25em;
+  font-weight: bold;
 }
 
 .printing-thumbnail {
-    margin-left: .5em;
-    margin-right: .5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
 }
 
 .printing-progress-text {
-    font-size: 1.25em;
-    font-weight: bold;
+  font-size: 1.25em;
+  font-weight: bold;
 }
 
 .cnc-status {
-    padding: 0.35em 0.5em;
-    border: 1px solid alpha(@text, 0.22);
+  padding: 0.35em 0.5em;
+  border: 1px solid alpha(@text, 0.22);
 }
 
 .cnc-jog-pad {
-    padding: 0.2em;
-    border: 1px solid alpha(@text, 0.18);
-    background-color: alpha(@text, 0.025);
+  padding: 0.2em;
+  border: 1px solid alpha(@text, 0.18);
+  background-color: alpha(@text, 0.025);
 }
 
 .cnc-jog-button {
-    min-width: 2.4em;
-    min-height: 2.4em;
-    margin: 0.05em;
-    padding: 0.1em;
+  min-width: 2.4em;
+  min-height: 2.4em;
+  margin: 0.05em;
+  padding: 0.1em;
 }
 
 .cnc-jog-corner {
-    font-family: monospace;
-    font-size: 0.85em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 0.85em;
+  font-weight: bold;
 }
 
 .cnc-jog-center {
-    font-family: monospace;
-    font-size: 1em;
-    font-weight: bold;
-    opacity: 0.55;
-    border: 1px solid alpha(@text, 0.14);
+  font-family: monospace;
+  font-size: 1em;
+  font-weight: bold;
+  opacity: 0.55;
+  border: 1px solid alpha(@text, 0.14);
 }
 
 .cnc-jog-actions {
-    padding-left: 0.2em;
+  padding-left: 0.2em;
 }
 
 .cnc-file-start {
-    min-width: 3.2em;
-    min-height: 3.2em;
-    padding: 0.35em;
-    margin: 0.1em;
+  min-width: 3.2em;
+  min-height: 3.2em;
+  padding: 0.35em;
+  margin: 0.1em;
 }
 
 .cnc-dro-heading {
-    font-weight: bold;
-    opacity: 0.75;
+  font-weight: bold;
+  opacity: 0.75;
 }
 
 .cnc-dro-card {
-    padding: 0.65em;
-    border: 1px solid alpha(@text, 0.18);
-    background-color: alpha(@text, 0.025);
+  padding: 0.65em;
+  border: 1px solid alpha(@text, 0.18);
+  background-color: alpha(@text, 0.025);
 }
 
 .cnc-dro-card-x {
-    border-top: 0.2em solid @color1;
+  border-top: 0.2em solid @color1;
 }
 
 .cnc-dro-card-y {
-    border-top: 0.2em solid @color2;
+  border-top: 0.2em solid @color2;
 }
 
 .cnc-dro-card-z {
-    border-top: 0.2em solid @color3;
+  border-top: 0.2em solid @color3;
 }
 
 .cnc-dro-axis {
-    font-size: 1.15em;
-    font-weight: bold;
+  font-size: 1.15em;
+  font-weight: bold;
 }
 
 .cnc-dro-homed {
-    font-size: 0.7em;
-    font-weight: bold;
-    color: @warning;
+  font-size: 0.7em;
+  font-weight: bold;
+  color: @warning;
 }
 
 .cnc-dro-homed-active {
-    color: @color4;
+  color: @color4;
 }
 
 .cnc-dro-field {
-    font-size: 0.7em;
-    font-weight: bold;
-    opacity: 0.6;
+  font-size: 0.7em;
+  font-weight: bold;
+  opacity: 0.6;
 }
 
 .cnc-dro-value {
-    font-family: monospace;
-    font-size: 1.35em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.35em;
+  font-weight: bold;
 }
 
 .cnc-dro-limits {
-    font-family: monospace;
-    font-size: 0.75em;
-    opacity: 0.65;
-    padding-top: 0.35em;
-    border-top: 1px solid alpha(@text, 0.12);
+  font-family: monospace;
+  font-size: 0.75em;
+  opacity: 0.65;
+  padding-top: 0.35em;
+  border-top: 1px solid alpha(@text, 0.12);
 }
 
 .cnc-wcs-card {
-    padding: 0.35em;
-    border: 1px solid alpha(@text, 0.16);
-    background-color: alpha(@text, 0.025);
+  padding: 0.35em;
+  border: 1px solid alpha(@text, 0.16);
+  background-color: alpha(@text, 0.025);
 }
 
 .cnc-wcs-button {
-    min-height: 2.2em;
-    font-weight: bold;
+  min-height: 2.2em;
+  font-weight: bold;
 }
 
 .cnc-wcs-active {
-    background-color: @active;
-    border: 0.2em solid @color4;
+  background-color: @active;
+  border: 0.2em solid @color4;
 }
 
 .cnc-wcs-offset {
-    padding: 0.2em 0.5em;
-    font-family: monospace;
-    font-size: 0.9em;
+  padding: 0.2em 0.5em;
+  font-family: monospace;
+  font-size: 0.9em;
 }
 
 .cnc-spindle-state {
-    font-family: monospace;
-    font-size: 3em;
-    font-weight: bold;
-    color: @lines;
+  font-family: monospace;
+  font-size: 3em;
+  font-weight: bold;
+  color: @lines;
 }
 
 .cnc-spindle-running {
-    color: @color4;
+  color: @color4;
 }
 
 .cnc-spindle-source {
-    opacity: 0.6;
+  opacity: 0.6;
 }
 
 .cnc-status-card {
-    padding: 0.8em 0.9em;
-    border: 1px solid alpha(@text, 0.16);
-    background-color: alpha(@text, 0.035);
+  padding: 0.8em 0.9em;
+  border: 1px solid alpha(@text, 0.16);
+  background-color: alpha(@text, 0.035);
 }
 
 .cnc-status-heading {
-    font-size: 0.7em;
-    font-weight: bold;
-    opacity: 0.6;
+  font-size: 0.7em;
+  font-weight: bold;
+  opacity: 0.6;
 }
 
 .cnc-status-value {
-    font-family: monospace;
-    font-size: 1.2em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 .cnc-probe-card {
-    padding: 0.65em 0.75em;
-    border: 1px solid alpha(@text, 0.16);
-    background-color: alpha(@text, 0.035);
+  padding: 0.65em 0.75em;
+  border: 1px solid alpha(@text, 0.16);
+  background-color: alpha(@text, 0.035);
 }
 
 .cnc-probe-section {
-    padding: 0.45em 0.55em;
-    border: 1px solid alpha(@text, 0.12);
-    background-color: alpha(@text, 0.02);
+  padding: 0.45em 0.55em;
+  border: 1px solid alpha(@text, 0.12);
+  background-color: alpha(@text, 0.02);
 }
 
 .cnc-probe-heading {
-    font-size: 1.1em;
+  font-size: 1.1em;
 }
 
 .cnc-probe-detail {
-    opacity: 0.68;
-    font-size: 0.85em;
+  opacity: 0.68;
+  font-size: 0.85em;
 }
 
 .cnc-probe-action {
-    min-height: 3.3em;
+  min-height: 3.3em;
 }
 
 .cnc-history-card {
-    padding: 0.55em 0.65em;
-    border: 1px solid alpha(@text, 0.16);
-    background-color: alpha(@text, 0.035);
+  padding: 0.55em 0.65em;
+  border: 1px solid alpha(@text, 0.16);
+  background-color: alpha(@text, 0.035);
 }
 
 .cnc-history-accent {
-    min-height: 0.22em;
+  min-height: 0.22em;
 }
 
 .cnc-history-accent-surface {
-    background-color: @color3;
+  background-color: @color3;
 }
 
 .cnc-history-accent-touch {
-    background-color: @color2;
+  background-color: @color2;
 }
 
 .cnc-history-accent-setter {
-    background-color: @color4;
+  background-color: @color4;
 }
 
 .cnc-history-title {
-    font-size: 1.05em;
-    font-weight: bold;
+  font-size: 1.05em;
+  font-weight: bold;
 }
 
 .cnc-history-meta {
-    font-size: 0.78em;
-    opacity: 0.66;
+  font-size: 0.78em;
+  opacity: 0.66;
 }
 
 .cnc-history-result {
-    font-family: monospace;
-    font-size: 1.08em;
-    font-weight: bold;
-    color: @color4;
+  font-family: monospace;
+  font-size: 1.08em;
+  font-weight: bold;
+  color: @color4;
 }
 
 .cnc-history-highlight {
-    font-weight: bold;
-    color: @color2;
+  font-weight: bold;
+  color: @color2;
 }
 
 .cnc-history-detail {
-    font-size: 0.82em;
-    opacity: 0.72;
+  font-size: 0.82em;
+  opacity: 0.72;
 }
 
 .cnc-confirm-badge {
-    padding: 0.35em 0.55em;
-    border-left: .4em solid @color4;
-    background-color: alpha(@text, 0.055);
-    font-weight: bold;
+  padding: 0.35em 0.55em;
+  border-left: 0.4em solid @color4;
+  background-color: alpha(@text, 0.055);
+  font-weight: bold;
 }
 
 .cnc-confirm-checklist {
-    font-size: 0.9em;
-    opacity: 0.82;
+  font-size: 0.9em;
+  opacity: 0.82;
 }
 
 .cnc-confirm-script {
-    padding: 0.45em 0.55em;
-    background-color: alpha(@text, 0.045);
-    font-family: monospace;
-    font-size: 0.85em;
+  padding: 0.45em 0.55em;
+  background-color: alpha(@text, 0.045);
+  font-family: monospace;
+  font-size: 0.85em;
 }
 
 .cnc-override-value {
-    font-family: monospace;
-    font-size: 4em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 4em;
+  font-weight: bold;
 }
 
 .cnc-override-note {
-    font-size: 0.8em;
-    opacity: 0.65;
+  font-size: 0.8em;
+  opacity: 0.65;
 }
 
 .cnc-run-hero {
-    padding: 0.45em 0.7em;
-    border: 1px solid alpha(@text, 0.14);
-    background-color: alpha(@text, 0.025);
+  padding: 0.45em 0.7em;
+  border: 1px solid alpha(@text, 0.14);
+  background-color: alpha(@text, 0.025);
 }
 
 .cnc-run-progress-text {
-    font-family: monospace;
-    font-size: 1.35em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.35em;
+  font-weight: bold;
 }
 
 .cnc-run-filename {
-    font-family: monospace;
-    font-size: 1.55em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.55em;
+  font-weight: bold;
 }
 
 .cnc-run-message {
-    opacity: 0.72;
+  opacity: 0.72;
 }
 
 .cnc-run-state-active {
-    color: @color4;
+  color: @color4;
 }
 
 .cnc-run-position-card,
 .cnc-run-metric-card {
-    padding: 0.55em 0.7em;
-    border: 1px solid alpha(@text, 0.16);
-    background-color: alpha(@text, 0.035);
+  padding: 0.55em 0.7em;
+  border: 1px solid alpha(@text, 0.16);
+  background-color: alpha(@text, 0.035);
 }
 
 .cnc-run-axis {
-    font-family: monospace;
-    font-size: 1.15em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.15em;
+  font-weight: bold;
 }
 
 .cnc-run-position-value {
-    font-family: monospace;
-    font-size: 1.35em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.35em;
+  font-weight: bold;
 }
 
 .cnc-run-work-value {
-    font-family: monospace;
-    font-size: 1.1em;
-    font-weight: bold;
-    opacity: 0.82;
+  font-family: monospace;
+  font-size: 1.1em;
+  font-weight: bold;
+  opacity: 0.82;
 }
 
 .cnc-run-metric-value {
-    font-family: monospace;
-    font-size: 1.05em;
-    font-weight: bold;
+  font-family: monospace;
+  font-size: 1.05em;
+  font-weight: bold;
 }
 
 .printing-status-label {
-    padding-top: .25em;
-    padding-bottom: .15em;
-    font-size: 1.25em;
+  padding-top: 0.25em;
+  padding-bottom: 0.15em;
+  font-size: 1.25em;
 }
 
 .print-filename {
-    font-size: 1.1em;
-    margin-bottom: 0.2em;
-
+  font-size: 1.1em;
+  margin-bottom: 0.2em;
 }
 
 .print-info {
-    font-size: 0.95em;
+  font-size: 0.95em;
 }
 
 .updater-item {
-    min-height: 3em;
-    padding: .2em;
+  min-height: 3em;
+  padding: 0.2em;
 }
 
 .message {
-    border: .1em solid @error;
-    font-size: 1em;
-    padding: 2.5em;
-    color: @text;
-    background-color: @error;
+  border: 0.1em solid @error;
+  font-size: 1em;
+  padding: 2.5em;
+  color: @text;
+  background-color: @error;
 }
 
 .message button {
-    background-color: @text;
-    color: @text-inv;
-    padding: 2em 2.5em 2em 2.5em;
+  background-color: @text;
+  color: @text-inv;
+  padding: 2em 2.5em 2em 2.5em;
 }
 
 .system-program-grid {
-    padding: 0.25em;
-    padding-right: .5em;
-    padding-bottom: 0;
+  padding: 0.25em;
+  padding-right: 0.5em;
+  padding-bottom: 0;
 }
 
 .warning {
-    background-color: rgba(30, 204, 39, 0.7);
+  background-color: rgba(30, 204, 39, 0.7);
 }
 
 .error {
-    background-color: rgba(204, 30, 30, 0.7);
+  background-color: rgba(204, 30, 30, 0.7);
 }
 
 popover {
-    background-color: @bg;
-    border: 0.1em solid white;
-    padding: 0em;
+  background-color: @bg;
+  border: 0.1em solid white;
+  padding: 0em;
 }
 
 popover button {
-    background-color: @bg;
-    padding: 1em 3.1em;
-    margin: 0;
+  background-color: @bg;
+  padding: 1em 3.1em;
+  margin: 0;
 }
 
-.lock
-.lock button
-.lock button:hover,
+.lock .lock button .lock button:hover,
 .lock button:focus,
 .lock button:active {
-    border: 0;
-    margin: 0;
-    background-color: Transparent;
+  border: 0;
+  margin: 0;
+  background-color: Transparent;
 }
 
 .lockscreen_entry {
-    margin: 2em;
+  margin: 2em;
 }
 
 .lockscreen_button {
-    padding: 2em;
+  padding: 2em;
 }
 
 .screensaver,
@@ -933,117 +930,122 @@ popover button {
 .screensaver button:hover,
 .screensaver button:focus,
 .screensaver button:active {
-    background-color: black;
-    border: 0;
-    margin: 0;
+  background-color: black;
+  border: 0;
+  margin: 0;
 }
 
 .option_slider_max trough highlight,
 trough progress {
-    background-color: @error;
+  background-color: @error;
 }
 
 .filament_sensor {
-    border-radius: 3em;
+  border-radius: 3em;
 }
 
 .filament_sensor switch {
-    margin: 0;
+  margin: 0;
 }
 
 .filament_sensor_detected {
-    background-color: @echo;
+  background-color: @echo;
 }
 
 .filament_sensor_empty {
-    background-color: @error;
+  background-color: @error;
 }
 
 .buttons_slim,
 .buttons_slim label {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.graph_label {border-left-width: .4em; border-left-style: solid;}
+.graph_label {
+  border-left-width: 0.4em;
+  border-left-style: solid;
+}
 
-button.graph_label {padding-left: 0.25em;}
+button.graph_label {
+  padding-left: 0.25em;
+}
 
 .dialog-error {
-    border-bottom: .4em solid @error;
+  border-bottom: 0.4em solid @error;
 }
 
 .dialog-warning {
-    border-bottom: .4em solid @warning;
+  border-bottom: 0.4em solid @warning;
 }
 
 .dialog-info {
-    border-bottom: .4em solid @color4;
+  border-bottom: 0.4em solid @color4;
 }
 
 .dialog-default {
-    border-bottom: .4em solid @color3;
+  border-bottom: 0.4em solid @color3;
 }
 
 .dialog-secondary {
-    border-bottom: .4em solid @color2;
+  border-bottom: 0.4em solid @color2;
 }
 
 .dialog-primary {
-    border-bottom: .4em solid @color1;
+  border-bottom: 0.4em solid @color1;
 }
 
 .dialog .image-button {
-    background-color: transparent;
-    padding: 0;
-    margin: 0.25em;
+  background-color: transparent;
+  padding: 0;
+  margin: 0.25em;
 }
 
 flowboxchild {
-    padding: 0;
+  padding: 0;
 }
 
 flowbox button {
-    margin: 0.1em;
-    padding: .5em;
+  margin: 0.1em;
+  padding: 0.5em;
 }
 
 keyboard_box {
-    padding: 0 20em;
+  padding: 0 20em;
 }
 
 .spool_title {
-    padding: .5em;
+  padding: 0.5em;
 }
 
 .spool_icon {
-    padding-right: .5em;
+  padding-right: 0.5em;
 }
 
 .endstop {
-    padding: 0.5em;
-    border-radius: .5em;
-    margin: 0.5em 1em;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  margin: 0.5em 1em;
 }
 
 .endstop-open {
-    background-color: @echo;
+  background-color: @echo;
 }
 
 .endstop-triggered {
-    background-color: @error;
+  background-color: @error;
 }
 
 .no-margin {
-    margin: 0;
+  margin: 0;
 }
 
 .no-padding {
-    padding: 0;
+  padding: 0;
 }
 
 .monospaced {
-    font-family: monospace;
+  font-family: monospace;
 }
