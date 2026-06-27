@@ -501,4 +501,8 @@ function dockPanel() {
 .v-card.panel.floating .panel-content {
     overflow: auto;
 }
+
+.v-toolbar__content > .v-toolbar-title {
+    margin-inline-start: 6px;
+}
 </style>

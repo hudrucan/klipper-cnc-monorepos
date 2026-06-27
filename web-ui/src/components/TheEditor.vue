@@ -47,7 +47,6 @@
                         color="primary"
                         variant="text"
                         rounded="0"
-                        class="d-none d-sm-flex"
                         @click="save(restartServiceName)">
                         <v-icon size="small" class="mr-1">{{ mdiRestart }}</v-icon>
                         {{ $t('Editor.SaveRestart') }}
@@ -656,8 +655,8 @@ watch(changed, (newVal: boolean) => {
     white-space: nowrap;
 }
 
-.editor-header-icon-btn + .editor-header-icon-btn {
-    margin-inline-start: 8px;
+.editor-header-icon-btn {
+    margin-inline: 12px;
 }
 
 :deep(.editor-dialog) .panel-content {

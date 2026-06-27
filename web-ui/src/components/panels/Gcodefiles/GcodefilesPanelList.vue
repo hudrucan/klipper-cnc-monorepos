@@ -39,7 +39,7 @@ const { currentPath, files, selectedFiles, setSelectedFiles } = useGcodeFiles()
 const directories = computed(() => files.value.filter((file) => file.isDirectory))
 
 const filesOnly = computed(() => {
-    const output = files.value.filter((file) => !file.isDirectory) as FileStateGcodefile[]
+    const output = files.value.filter((file) => !file.isDirectory).reverse() as FileStateGcodefile[]
     const requestItems = output.filter((file) => !file.metadataRequested && !file.metadataPulled)
 
     if (requestItems.length) {
@@ -80,9 +80,15 @@ function selectItem(item: { filename: string }, value: boolean) {
     padding: 0 12px;
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1024px) {
     .gcode-list__grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1600px) {
+    .gcode-list__grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 }
 

@@ -27,7 +27,7 @@
                         <template #title>{{ $t('App.TopCornerMenu.KlipperFirmwareRestart') }}</template>
                         <template #append>
                             <div class="my-0 d-flex flex-row" style="min-width: auto">
-                                <v-icon class="mr-2" size="small">{{ mdiRestart }}</v-icon>
+                                <v-icon class="mr-2 ml-4" size="small">{{ mdiRestart }}</v-icon>
                             </div>
                         </template>
                     </v-list-item>
