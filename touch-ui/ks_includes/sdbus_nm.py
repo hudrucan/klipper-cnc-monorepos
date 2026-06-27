@@ -93,9 +93,7 @@ class SdbusNm:
             return None
         sdbus.set_default_bus(self.system_bus)
         self.nm = NetworkManager()
-        self.wlan_device = (
-            self.get_wireless_interfaces()[0] if self.get_wireless_interfaces() else None
-        )
+        self.wlan_device = self.get_best_wireless_interface()
         self.wifi = self.wlan_device is not None
         self.monitor_connection = False
         self.wifi_state = -1
@@ -129,6 +127,34 @@ class SdbusNm:
             if dev.device_type == enums.DeviceType.WIFI:
                 wireless_interfaces.append(NetworkDeviceWireless(path))
         return wireless_interfaces
+
+    def get_best_wireless_interface(self):
+        wireless_interfaces = self.get_wireless_interfaces()
+        if not wireless_interfaces:
+            return None
+
+        logging.debug(
+            "NetworkManager wireless interfaces: %s",
+            [(dev.interface, dev.state) for dev in wireless_interfaces],
+        )
+
+        # Prefer a real, active Wi-Fi client interface. Some systems expose
+        # Wi-Fi Direct / P2P devices such as p2p0 before wlan0; those are not
+        # suitable for normal AP scanning/connection management.
+        for dev in wireless_interfaces:
+            if (
+                not dev.interface.startswith("p2p")
+                and dev.state == enums.DeviceState.ACTIVATED
+            ):
+                return dev
+
+        # Then prefer any non-P2P Wi-Fi interface, even if disconnected.
+        for dev in wireless_interfaces:
+            if not dev.interface.startswith("p2p"):
+                return dev
+
+        # Last fallback: keep previous behavior if only P2P-like interfaces exist.
+        return wireless_interfaces[0]
 
     def get_all_network_devices(self):
         devices = []
